@@ -6,4 +6,5 @@ val playgame : unit -> state
 
 (* [repl_loop st str] is the repl loop that the game uses by looking at the
  * current state [st] and the command [str] issued by the player. *)
+ (* Design Meeting Note: Implement parsing for the string command separately *)
 val repl_loop : state -> string -> state
