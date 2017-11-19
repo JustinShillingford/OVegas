@@ -1,4 +1,4 @@
-type suit
+type suit = Heart | Club | Diamond | Spade
 
 type rank
 
