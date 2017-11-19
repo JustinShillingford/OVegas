@@ -5,7 +5,9 @@ type rank = int
 type card = rank * suit
 
 let init_card r s =
-  failwith "Unimplemented"
+  if ((r >= 1 && r <= 12)
+  && (s = Heart || s = Club || s = Diamond || s = Spade)) then (r, s)
+  else failwith "Not a valid card"
 
 let rep_ok c =
   failwith "Unimplemented"
