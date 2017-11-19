@@ -5,7 +5,7 @@ type deck = card list
 
 type pot = (player * int) list
 
-type table
+type table = deck * pot * card list
 
 let shuffle d =
   failwith "Unimplemented"
