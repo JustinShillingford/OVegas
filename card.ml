@@ -4,11 +4,11 @@ type rank = int
 
 type card = suit * rank
 
-let init_card rank suit =
+let init_card r s =
   failwith "Unimplemented"
 
-let rep_ok card =
+let rep_ok c =
   failwith "Unimplemented"
 
-let string_of_card card =
+let string_of_card c =
   failwith "Unimplemented"
