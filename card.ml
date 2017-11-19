@@ -2,7 +2,7 @@ type suit = Heart | Club | Diamond | Spade
 
 type rank = int
 
-type card = suit * rank
+type card = rank * suit
 
 let init_card r s =
   failwith "Unimplemented"
