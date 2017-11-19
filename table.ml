@@ -1,8 +1,9 @@
 open Card
+open Player
 
 type deck = card list
 
-type pot
+type pot =
 
 type table
 
