@@ -4,15 +4,16 @@ type rank = int
 
 type card = rank * suit
 
-let init_card (r : rank) (s : suit) =
-  (r, s)
-
 let rep_ok c =
   match c with
   | (r, s) -> begin
     if ((r >= 1 && r <= 13)
     && (s = Heart || s = Club || s = Diamond || s = Spade)) then true else false
   end
+
+let init_card (r : rank) (s : suit) =
+  match (r, s) with
+  | (r, s) -> if (rep_ok (r, s)) then (r, s) else failwith "Not a valid card"
 
 (* [string_of_suit s] is the string representation of the suit [s] of a card *)
 let string_of_suit s =

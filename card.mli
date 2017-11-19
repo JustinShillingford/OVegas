@@ -9,12 +9,12 @@ type rank
 (* [card] is the type of a card. It's a combination of a rank and a suit. *)
 type card
 
+(* [rep_ok c] is the boolean which checks if a card is a proper suit
+* and proper rank. *)
+val rep_ok : card -> bool
+
 (* [init_card r s] is the card which has rank [r] and suit [s]. *)
 val init_card : rank -> suit -> card
-
-(* [rep_ok c] is the boolean which checks if a card is a proper suit
- * and proper rank. *)
-val rep_ok : card -> bool
 
 (* [string_of_card c] is the string representation of the card [c]. *)
 val string_of_card : card -> string
