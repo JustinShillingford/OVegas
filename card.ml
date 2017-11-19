@@ -14,6 +14,7 @@ let rep_ok c =
     && (s = Heart || s = Club || s = Diamond || s = Spade)) then true else false
   end
 
+(* [string_of_suit s] is the string representation of the suit [s] of a card *)
 let string_of_suit s =
   match s with
   | Heart -> "Hearts"
