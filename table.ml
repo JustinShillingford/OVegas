@@ -1,6 +1,6 @@
 open Card
 
-type deck
+type deck = card list
 
 type pot
 
