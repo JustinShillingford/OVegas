@@ -3,7 +3,7 @@
  * or spade. *)
 type suit
 
-(* [rank] is the type of a card rank. It's any value between 1 and 12. *)
+(* [rank] is the type of a card rank. It's any value between 1 and 13. *)
 type rank
 
 (* [card] is the type of a card. It's a combination of a rank and a suit. *)
