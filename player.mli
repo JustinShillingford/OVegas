@@ -1,5 +1,3 @@
-open Card
-
 (* [player] is the type of a player. Each player has an id, a name,
  * an indicator if it's an AI, a hand, and a score *)
 type player
