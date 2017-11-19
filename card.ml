@@ -1,8 +1,8 @@
 type suit = Heart | Club | Diamond | Spade
 
-type rank
+type rank = int
 
-type card
+type card = suit * rank
 
 let init_card rank suit =
   failwith "Unimplemented"
