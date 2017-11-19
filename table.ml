@@ -3,7 +3,7 @@ open Player
 
 type deck = card list
 
-type pot =
+type pot = (player * int) list
 
 type table
 
