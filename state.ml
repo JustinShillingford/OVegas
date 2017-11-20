@@ -1,10 +1,9 @@
-
 open Player
 open Table
 
-type state = {players: player list; round: int; pot:int }
+type state = {players: player list; round: int; pot:int; table: table }
 
-let initial_state player_list = {players= player_list; round=0; pot=0}
+let initial_state player_list = {players= player_list; round=0; pot=0; table = (deck, []) }
 
 (* let do_call st p  =
 

@@ -1,13 +1,9 @@
-(* [player] is the type of a player. Each player has an id, a name,
- * an indicator if it's an AI, a hand, and a score *)
-type player
-
 (* [hand] is the type of a hand. It's a combination of two cards. *)
 type hand
 
-(* [command] is the type of a player command. It can be raise, call,
- * check, fold. *)
-type command
+(* [player] is the type of a player. Each player has an id, a name,
+ * an indicator if it's an AI, a hand, and a score *)
+type player
 
 (* [init_player] is the initial value of a player that is not an AI. *)
 val init_player : player
