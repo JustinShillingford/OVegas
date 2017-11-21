@@ -13,7 +13,7 @@ let do_bet st p x = *)
 
 let do' st p c=
   match c with
-  |Call -> do_call st p
-  |Fold ->  do_fold st p
-  |Bet(x)->  do_bet st p x
-  |Quit -> st
+  | Call -> do_call st p
+  | Fold ->  do_fold st p
+  | Bet(x)->  do_bet st p x
+  | Quit -> st
