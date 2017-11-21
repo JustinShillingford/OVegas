@@ -1,4 +1,5 @@
 open Card
+open Player
 
 (* [deck] is a combination of cards where no two cards can be similar. *)
 type deck
