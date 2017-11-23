@@ -26,7 +26,7 @@ let string_of_suit s =
   | Spade -> "Spades"
 
 let string_of_card c =
-  match rep_ok c with
+  match c with
   | (r, s) -> begin
     if ((r >= 2 && r <= 10)) then (string_of_int r) ^ " of " ^ (string_of_suit s)
     else if (r = 1) then "Ace of " ^ (string_of_suit s)
