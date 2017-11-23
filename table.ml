@@ -10,6 +10,7 @@ type deck = card list
 type table = deck * card list option
 (* type table = deck * pot * card list *)
 
+
 let rep_ok d =
   failwith "Unimplemented"
 
