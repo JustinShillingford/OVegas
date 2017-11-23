@@ -20,6 +20,8 @@ type table = deck * card list
    Deck must have exactly 4 cards of each rank
 *)
 
+(* [has13ofSuitHelper d hrt clb dmd spd] is a validation that a given deck [d]
+ * contains exactly 13 cards of each suit. *)
 let rec has13ofSuitHelper d hrt clb dmd spd =
   match d with
   | [] -> (spd = 13) && (clb = 13) && (hrt = 13) && (dmd = 13)
@@ -31,6 +33,8 @@ let rec has13ofSuitHelper d hrt clb dmd spd =
       | Spade -> has13ofSuitHelper t hrt clb dmd (spd + 1)
   end
 
+(* [has4ofRankHelper d rankArray] is a validation that a given deck [d]
+ * contains exactly 4 cards of each rank. *)
 let rec has4ofRankHelper d rankArray =
   match d with
   | [] -> Array.fold_left (fun acc x -> acc && (x=4)) true rankArray
@@ -57,6 +61,7 @@ let shuffle d =
     end in
   shuffle_helper [] (rep_ok d)
 
+(* [suit_from_n n] is the suit representation of an int [n] *)
 let suit_from_n n =
   match n with
   | 0 -> Heart
