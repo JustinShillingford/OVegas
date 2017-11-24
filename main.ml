@@ -5,3 +5,5 @@ let rec repl st str =
 
  let playgame () =
   failwith "Unimplemented"
+
+let () = playgame ()
