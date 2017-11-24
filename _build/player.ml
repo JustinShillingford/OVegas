@@ -6,7 +6,7 @@ type hand = card list
 type player = {id: string; two_cards: hand; money: int}
 
 let init_player name deck = 
-  let (t, c1, c2) = two_cards deck in
+  let (t, c1, c2) = make_hand deck in
   {id = name; two_cards = [c1;c2] ; money=100}
 
 let string_of_hand h = 

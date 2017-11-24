@@ -1,6 +1,6 @@
 ### Starting build.
 # Target: checktypes.ml.depends, tags: { extension:ml, file:checktypes.ml, ocaml, ocamldep, quiet }
-ocamlfind ocamldep -modules checktypes.ml > checktypes.ml.depends
+ocamlfind ocamldep -modules checktypes.ml > checktypes.ml.depends # cached
 # Target: card.mli.depends, tags: { extension:mli, file:card.mli, ocaml, ocamldep, quiet }
 ocamlfind ocamldep -modules card.mli > card.mli.depends # cached
 # Target: card.cmi, tags: { byte, compile, extension:mli, file:card.mli, interf, ocaml, quiet }

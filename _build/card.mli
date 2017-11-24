@@ -1,13 +1,14 @@
+exception InvalidCard
 
 (* [suit] is the type of a card suit. It can be heart, club, diamond,
  * or spade. *)
-type suit
-
+ type suit = Heart | Club | Diamond | Spade
+ 
 (* [rank] is the type of a card rank. It's any value between 1 and 13. *)
-type rank
+type rank = int
 
 (* [card] is the type of a card. It's a combination of a rank and a suit. *)
-type card
+type card = rank * suit
 
 (* [rep_ok c] is the boolean which checks if a card is a proper suit
 * and proper rank. *)
