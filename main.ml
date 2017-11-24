@@ -1,6 +1,6 @@
 open State
 
-let repl st s =
+let repl st str =
   failwith "Unimplemented"
 
  let playgame () =
