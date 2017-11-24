@@ -22,8 +22,6 @@ let rec repl st str =
   end in
   (* The part above should allow for the program to obtain the names of the 2
    * players. Need to find way to use these names in st for the repl. *)
-   (* Testing *)
-
 
 
 (* let () = playgame () *)
