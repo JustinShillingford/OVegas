@@ -1,8 +1,7 @@
 open State
 
+let repl st s =
+  failwith "Unimplemented"
+
  let playgame () =
   failwith "Unimplemented"
- 
- let repl_loop st s = 
-  failwith "Unimplemented"
- 
