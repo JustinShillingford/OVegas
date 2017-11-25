@@ -8,7 +8,7 @@ type player
 
 (* [init_player] is a new player (not an AI) and the remaining deck after
     dealing that player's hand. *)
-val init_player : string -> Table.deck -> (player, Table.deck)
+val init_player : string -> Table.deck -> player * Table.deck
 
 (* [string_of_hand h] is the string representation of the hand [h]. *)
 val string_of_hand : hand -> string
