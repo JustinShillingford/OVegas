@@ -3,7 +3,6 @@ open Table
 open Player
 open Command
 
-type state = {players: player list; round: int; pot:int; table: table}
 let initial_state player_list deck =
   let d = deck in
   {players = player_list; round = 0; pot = 0; table = (d, None)}
