@@ -4,7 +4,6 @@
  (* Design Meeting Note: Implement parsing for the string command separately. *)
  val repl : State.state -> Player.player -> unit
 
-
 (* [playgame] is the initial function called to start the game. It uses the
  * function [repl] for new turns and rounds. *)
 val playgame : unit -> State.state
