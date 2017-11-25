@@ -4,7 +4,7 @@ type state
 
 (* [initial_state] is the initial value of a state in a typical game with
  * the initial value of players and the initial value of a table. *)
-val initial_state : Player.player list -> state
+val initial_state : Player.player list -> Table.deck -> state
 
 (* [string_of_state st] is the string representation of the state [st]. *)
 val string_of_state : state -> string

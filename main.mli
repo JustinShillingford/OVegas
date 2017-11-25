@@ -1,4 +1,4 @@
-(* [repl st str] is the repl loop that the game uses by looking at the
+(* [repl st str] is the repl that the game uses by looking at the
  * current state [st] and the command [str] issued by the player. *)
  (* Design Meeting Note: Implement parsing for the string command separately *)
  val repl : State.state -> string -> State.state
