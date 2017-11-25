@@ -10,7 +10,10 @@ let init_player name deck =
   ({id = name; two_cards = [c1;c2] ; money=100}, fst t)
 
 let string_of_hand h =
-  failwith "Unimplemented"
+  (* Can also use this function to draw the ASCII representation of cards *)
+  match h with
+  | f::s::[] -> "This hand has a " ^ string_of_card f ^ " and a " ^ string_of_card s
+  | _ -> failwith "something is seriously wrong here."
 
 (* let is_small_blind p st =
   failwith "Unimplemented"
