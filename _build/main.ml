@@ -28,7 +28,7 @@ let rec repl st curr_player =
         repl next_state next_player
       end 
       | Bet(i) -> begin
-        print_endline ("You have just Bet.");
+        print_endline ("You have just Bet $" ^ string_of_int i ^ ".");
         repl next_state next_player
       end
       | Quit -> ()
