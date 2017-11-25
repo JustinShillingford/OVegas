@@ -54,7 +54,7 @@ let suit_from_n n =
   | 2 -> Diamond
   | 3 -> Spade
   | _ -> raise InvalidCard
- 
+
 let new_deck () =
   let rec new_deck_helper acc nth_card =
     let suit_of_nth = nth_card / 13 in
@@ -62,23 +62,23 @@ let new_deck () =
     if nth_card == 52 then List.rev acc
     else new_deck_helper ((rank_of_nth + 1, suit_from_n suit_of_nth)::acc) (nth_card + 1) in
   new_deck_helper [] 0
- 
+
 let rec flip_new_card (deck, cards) =
   match (rep_ok deck) with
   | h::t -> begin
     (* Pattern match cards to exract the value (middle cards) from the option *)
-    match cards with 
+    match cards with
     | Some old_cards -> begin
-      let (new_deck:deck) = t in 
-      let (new_mid:card list option) = Some (h::old_cards) in 
+      let (new_deck:deck) = t in
+      let (new_mid:card list option) = Some (h::old_cards) in
       ((new_deck, new_mid):table)
     end
     | None -> raise InvalidDeck
   end
   | [] -> raise EmptyDeck
- 
+
 let rec make_hand deck =
-  match (rep_ok deck) with
+  match deck with
   | c1::c2::t -> begin
     ((t, None), c1, c2)
   end

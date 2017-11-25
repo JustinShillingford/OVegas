@@ -13,6 +13,7 @@ let next_player plist old_p =
   | _ -> failwith "johanna messed up and/or there was more than two players???"
 
 let rec repl st curr_player =
+  print_endline ("Enter an action.");
   print_string "> ";
   let user_input =
     match read_line () with
@@ -35,7 +36,7 @@ let rec repl st curr_player =
       | Quit -> ()
 
  let playgame () =
-  ANSITerminal.(print_string [red] "\nWelcome to OVegas, the OCaml Texas Hold'em!");
+  ANSITerminal.(print_string [red] "\nWelcome to OVegas, the OCaml Texas Hold'em!\n");
   print_endline "Please enter the name of the first player.";
   print_string "> ";
   let player1_name = read_line () in
@@ -48,4 +49,4 @@ let rec repl st curr_player =
   let player2 = init_player player2_name (snd player1) in
   repl (initial_state [fst player1; fst player2] (snd player2)) (fst player1)
 
-(* let () = playgame () *)
+let () = playgame ()
