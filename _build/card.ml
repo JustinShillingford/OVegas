@@ -9,8 +9,8 @@ type card = rank * suit
 let rep_ok c =
   match c with
   | (r, s) -> begin
-    if ((r >= 2 && r <= 14)
-    && (s = Heart || s = Club || s = Diamond || s = Spade)) then c else failwith "rep_ok"
+    if ((r >= 1 && r <= 13)
+    && (s = Heart || s = Club || s = Diamond || s = Spade)) then c else raise InvalidCard
   end
   
 let init_card (r : rank) (s : suit) =

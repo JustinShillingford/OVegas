@@ -59,7 +59,7 @@ let new_deck () =
   let rec new_deck_helper acc nth_card =
     let suit_of_nth = nth_card / 13 in
     let rank_of_nth = (nth_card mod 13) in
-    let rank_of_nth' = (if rank_of_nth = 0 || rank_of_nth = 13 || rank_of_nth = 26 || rank_of_nth = 39 then 13 else rank_of_nth) in
+    let rank_of_nth' = (if rank_of_nth = 0 || rank_of_nth = 13 || rank_of_nth = 26 || rank_of_nth = 39 then 14 else rank_of_nth) in
     if nth_card == 52 then List.rev acc
     else new_deck_helper ((init_card (rank_of_nth'+1) (suit_from_n suit_of_nth))::acc) (nth_card + 1) in
   new_deck_helper [] 0
