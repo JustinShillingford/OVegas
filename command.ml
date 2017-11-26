@@ -20,7 +20,7 @@ let parse str =
       String.sub trimmed_str (first_space + 1) string_len
     else
       "" in
-      match first_word with
+      match String.trim (String.lowercase_ascii first_word) with
     | "call" -> Call
     | "fold" -> Fold
     | "bet" -> Bet (int_of_string second_half)

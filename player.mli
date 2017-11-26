@@ -6,8 +6,9 @@ type hand
  * an indicator if it's an AI, a hand, and a score *)
 type player
 
-(* [init_player] is the initial value of a player that is not an AI. *)
-val init_player : string -> Table.deck -> player
+(* [init_player] is a new player (not an AI) and the remaining deck after
+    dealing that player's hand. *)
+val init_player : string -> Table.deck -> player * Table.deck
 
 (* [string_of_hand h] is the string representation of the hand [h]. *)
 val string_of_hand : hand -> string
