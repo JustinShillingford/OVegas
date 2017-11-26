@@ -1,9 +1,8 @@
 open OUnit2
-open Table
 open Card
 
 let prac_tests = [
-  "inital test" >:: (fun _ -> assert_equal Heart (suit_from_n 0));
+  "inital test" >:: (fun _ -> assert_equal (4, Heart) (init_card 4 Heart));
 ]
 
 let test_suite =
