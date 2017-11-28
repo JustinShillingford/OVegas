@@ -13,12 +13,15 @@ type state = {players: player list; round: int; street: int; pot:int; table: tab
 let initial_state player_list deck =
   {players = player_list; round = 0; street = 0; pot = 0; table=(deck, None); latest_bet=0}
 
+(*[make_flop_cards st] returns an updated state once the initial flop occurs*)
 let make_flop_cards st =
   let (new_deck1, new_shared_cards1) = flip_new_card (fst st.table, snd st.table) in
   let (new_deck2, new_shared_cards2) = flip_new_card (new_deck1, new_shared_cards1) in
     let new_table = flip_new_card (new_deck2, new_shared_cards2) in
   {st with table = new_table; street =st.street+1}
 
+(*[make_flop_cards st] returns an updated state once the 4th or 5th card of the
+shared cards is flipped onto the table*)
 let make_turn_or_river_card st =
   let new_table = flip_new_card st.table  in
   {st with table = new_table; street =st.street+1; latest_bet=0}
@@ -104,33 +107,39 @@ let do' st p c=
   | Quit -> st
 
 
+(*[compare_cards c1 c2] compares the ranks of 2 cards and returns 1 if c1's rank
+is greater than c2's, -1 if its less, or 0 if they are equivalent*)
   let compare_cards c1 c2 =
     if (fst c1) > (fst c2) then 1
     else if (fst c2) > (fst c1) then -1
     else 0
 
-
+(*[sorted_ranks_list card_list] returns a list of cards sorted by their ranks*)
   let sorted_ranks_list card_list =
     let sorted_cards = List.sort compare_cards card_list in
     let ranks_of_sorted = List.map (fun x -> fst x) sorted_cards in
     ranks_of_sorted
 
-
+(*[suits_list card_list] returns a list of the suits of cards in [card_list]*)
   let suits_list card_list =
     let list_of_suits = List.map (fun x -> snd x) card_list in
     list_of_suits
 
+(*[highest_rank card_list] returns the highest card in a hand of 5 cards*)
   let highest_rank card_list =
     let ranks_list = sorted_ranks_list card_list in
     match ranks_list with
     |r1::r2::r3::r4::r5::[] -> r5
     |_ -> raise Invalid
 
+(*[has_high_card card_list] returns tuple consisting of 1 and the list in desc order *)
   let has_high_card card_list =
     let ranks_list = sorted_ranks_list card_list in
     let desc_order = List.rev ranks_list in
     Some (1, desc_order)
 
+(*[has_four_kind card_list] returns None or a tuple consisting of 8 and the list such that the
+  4 cards of same rank are close to front of list, and the other card is last element*)
   let has_four_kind card_list =
     let ranks_list = sorted_ranks_list card_list in
     match ranks_list with
@@ -140,6 +149,9 @@ let do' st p c=
       else None
     |_ -> raise Invalid
 
+(*[has_three_kind card_list] returns None or a tuple consisting of 4 and the list such that the
+  3 cards of same rank are close to front of list, and the other cards follow in
+  ascending order*)
   let has_three_kind card_list =
     let ranks_list = sorted_ranks_list card_list in
     match ranks_list with
@@ -149,6 +161,8 @@ let do' st p c=
       else None
     |_ -> raise Invalid
 
+(*[has_straight card_list] returns None or a tuple consisting of 5 and the 5 cards in
+  ascending order*)
   let has_straight c_list =
     let ranks_list = sorted_ranks_list c_list in
     match ranks_list with
@@ -159,6 +173,8 @@ let do' st p c=
       else None
     |_ -> None (*not sure if this is good design choice or if i should raise invalid??*)
 
+(*[has_flush card_list] returns None or a tuple consisting of 6 and the 5 cards in
+  descending order*)
   let has_flush c_list =
     let suit_list = suits_list c_list in
     match suit_list with
@@ -166,14 +182,16 @@ let do' st p c=
         let ranks_list = List.rev (sorted_ranks_list c_list) in Some (6,ranks_list) else None
     |_-> None
 
-
+(*[has_straight_flush card_list] returns None or a tuple consisting of 9 and the 5 cards in
+  descending order*)
   let has_straight_flush c_list =
     let check_if_straight = has_straight c_list in
     let check_if_flush = has_flush c_list in
     if (check_if_straight != None  && check_if_flush != None ) then
       let ranks_list = List.rev (sorted_ranks_list c_list) in Some (9,ranks_list) else None
 
-
+(*[has_royal_flush card_list] returns None or a tuple consisting of 10 and the 5 cards in
+  descending order*)
   let has_royal_flush c_list =
     let check_if_straight = has_straight c_list in
     let check_if_flush = has_flush c_list in
@@ -182,6 +200,8 @@ let do' st p c=
     if (check_if_straight != None && check_if_flush != None && check_highest_rank=14) then
       let ranks_list = List.rev (sorted_ranks_list c_list) in Some (10,ranks_list) else None
 
+(*[has_full_house card_list] returns None or a tuple consisting of 10 and the 5 cards in
+  descending order*)
   let has_full_house c_list =
     let ranks_list = sorted_ranks_list c_list in
     match ranks_list with
@@ -192,16 +212,19 @@ let do' st p c=
       else None
     |_ -> raise Invalid
 
+(*[num_same_rank c_list acc] returns the number of pairs in a card list*)
   let rec num_same_rank c_list acc =
     match c_list with
     |[]-> acc
     |h::t-> if List.mem h t then num_same_rank t (acc+1)  else num_same_rank t acc
 
+(*[num_same_rank_highest c_list acc] returns the highest pair in a card list*)
   let rec num_same_rank_highest c_list acc =
     match c_list with
     |[]-> acc
     |h::t-> if List.mem h t then num_same_rank_highest t h  else num_same_rank_highest t acc
 
+(*still needs work*)
   let has_pair c_list =
     let ranks_list = sorted_ranks_list c_list in
     if (has_three_kind c_list != None || has_four_kind c_list != None ||
@@ -210,7 +233,7 @@ let do' st p c=
       let num_pairs = num_same_rank ranks_list 0 in
       if num_pairs =1 then Some (2,(num_same_rank_highest ranks_list 0)::[]) else None
 
-
+(*still needs work*)
   let has_two_pair c_list =
     let ranks_list = sorted_ranks_list c_list in
     if (has_three_kind c_list != None || has_four_kind c_list != None ||
@@ -219,6 +242,8 @@ let do' st p c=
       let num_pairs = num_same_rank ranks_list 0  in
       if num_pairs =2 then Some (3,(num_same_rank_highest ranks_list 0)::[]) else None
 
+(*[all_card_combinations k c_list] returns all possible combinations of k elements from
+  list [c_list]*)
 let rec all_card_combinations k c_list =
   if k = 0 then
     [[]]
@@ -228,12 +253,15 @@ let rec all_card_combinations k c_list =
       | h :: t -> List.map (fun x -> h :: x) (all_card_combinations (k - 1) t) :: all_combs_helper t in
     List.concat (all_combs_helper c_list)
 
+(**)
 let all_player_cards player st =
   let p_hand = player.two_cards in
   match (snd st.table) with
   |Some (c1::c2::c3::c4::c5::[]) -> all_card_combinations 5 (c1::c2::c3::c4::c5::[]@p_hand)
   |_ -> raise Invalid
 
+(*[highest_hand c_list c_list] returns a tuple option with the best of the 10 types of
+  poker hands and the list of cards creating that best type*)
 let highest_hand c_list =
   if has_royal_flush c_list != None then
     has_royal_flush c_list
@@ -256,7 +284,7 @@ let highest_hand c_list =
   else has_high_card c_list
 
 
-(*returns true if p1_hand beats p2_hand.*)
+(*[is_p1_best_hand p1_cards p2_cards] returns true if p1_hand beats p2_hand.*)
 let is_p1_best_hand p1_cards p2_cards =
   if (p1_cards=None || p2_cards=None ) then
     raise Invalid
@@ -287,18 +315,22 @@ let is_p1_best_hand p1_cards p2_cards =
       else  p1_first_rank>p2_first_rank
     else fst p1_hand > fst p2_hand
 
-
+(*[compare_for_sort_hands hand1 hand2] returns 1 is hand1 is better than hand2,
+  -1 if its worse, or 0 if hand1 and hand2 are tied*)
 let compare_for_sort_hands hand1 hand2 =
   if is_p1_best_hand (highest_hand hand1) (highest_hand hand2) then 1
   else if is_p1_best_hand (highest_hand hand2) (highest_hand hand1) then -1
   else 0
 
+(*[player_best_hand player st] returns the best hand of the 21 different combinations
+  a player can make with his 2 cards and the shared cards on the table at state [st]*)
 let player_best_hand player st =
   let all_poss_five_cards = all_player_cards player st in
   let sorted_combs = List.sort compare_for_sort_hands (all_poss_five_cards) in
   let p_best_hand = List.nth sorted_combs 20 in
   p_best_hand
 
+(*[game_best_player_hand p1 p2 st] returns the best player at the state [st]*)
 let game_best_player_hand p1 p2 st=
   let best_p1_cards = player_best_hand p1 st in
   let best_p2_cards =  player_best_hand p2 st in
