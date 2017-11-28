@@ -1,4 +1,4 @@
-type command = Call | Fold | Bet of int | Check | Quit
+type command = Call | Fold | Bet of int | Check | Raise of int | Quit
 
 exception Illegal
 
@@ -25,5 +25,6 @@ let parse str =
     | "fold" -> Fold
     | "bet" -> Bet (int_of_string second_half)
     | "quit" -> Quit
-    | "check" -> Check 
+    | "check" -> Check
+    |"raise" -> Raise (int_of_string second_half)
     |_-> raise Illegal
