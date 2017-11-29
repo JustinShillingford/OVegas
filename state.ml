@@ -212,35 +212,65 @@ is greater than c2's, -1 if its less, or 0 if they are equivalent*)
       else None
     |_ -> raise Invalid
 
-(*[num_same_rank c_list acc] returns the number of pairs in a card list*)
-  let rec num_same_rank c_list acc =
-    match c_list with
+(*[num_same_rank c_list acc] returns the number of pairs in a rank list*)
+  let rec num_same_rank r_list acc =
+    match r_list with
     |[]-> acc
     |h::t-> if List.mem h t then num_same_rank t (acc+1)  else num_same_rank t acc
 
-(*[num_same_rank_highest c_list acc] returns the highest pair in a card list*)
-  let rec num_same_rank_highest c_list acc =
-    match c_list with
+(*[num_same_rank_highest c_list acc] returns the highest pair in a rank list*)
+  let rec num_same_rank_highest r_list acc =
+    match r_list with
     |[]-> acc
     |h::t-> if List.mem h t then num_same_rank_highest t h  else num_same_rank_highest t acc
 
-(*still needs work*)
+(*[same_rank_lst_two_pair c_list acc] returns a list of the pairs in a rank list*)
+  let rec same_rank_lst_two_pair r_list acc =
+    match r_list with
+    |[]-> acc
+    |h::t-> if List.mem h t then same_rank_lst_two_pair t (h::h::acc)  (*put the rank twice since it's a pair*)
+      else same_rank_lst_two_pair t acc
+
+(*[has_pair_helper p_rank ranks_lst] takes the pair in the original [ranks_lst] and
+  returns a list with same elements in r_list with order such that pair is left-most and remaining
+  ranks are in descending order*)
+let has_pair_helper p_rank ranks_lst =
+  let initial_list = p_rank::p_rank::[] in
+  let has_pair_list_helper = List.filter (fun (x) -> (List.mem x initial_list)=false) ranks_lst in
+  let ordered_has_pair_list = List.rev (List.sort compare has_pair_list_helper) in
+  initial_list@ordered_has_pair_list
+
+(*[has_pair c_list] returns None or a tuple consisting of 2 and the 5 cards in
+an order such that pair is left-most and remaining ranks are in descending order*)
   let has_pair c_list =
     let ranks_list = sorted_ranks_list c_list in
     if (has_three_kind c_list != None || has_four_kind c_list != None ||
         has_full_house c_list != None) then None
     else
       let num_pairs = num_same_rank ranks_list 0 in
-      if num_pairs =1 then Some (2,(num_same_rank_highest ranks_list 0)::2::2::2::2::[]) else None
+      let pair_rank = num_same_rank_highest ranks_list 0 in
+      let has_pair_ordered_list = has_pair_helper pair_rank ranks_list in
+      if num_pairs =1 then Some (2,has_pair_ordered_list) else None
 
-(*still needs work*)
-  let has_two_pair c_list =
+(*[has_pair_helper p_rank ranks_lst] takes a list of pairs in the original [ranks_lst] and
+  returns a list with same elements in r_list with order such that pairs are left-most
+  in descending order and remaining rank is rightmost*)
+let has_two_pair_helper p_list r_list =
+  let initial_list = List.rev (List.sort compare p_list) in
+  let remaining_element = List.filter (fun (x) -> (List.mem x initial_list)=false) r_list in
+  initial_list@remaining_element
+
+(*[has_two_pair c_list] returns None or a tuple consisting of 3 and the 5 cards in
+  an order such that pairs are left-most in descending order and remaining rank is rightmost*)
+let has_two_pair c_list =
     let ranks_list = sorted_ranks_list c_list in
     if (has_three_kind c_list != None || has_four_kind c_list != None ||
         has_full_house c_list != None) then None
     else
-      let num_pairs = num_same_rank ranks_list 0  in
-      if num_pairs =2 then Some (3,(num_same_rank_highest ranks_list 0)::2::2::2::2::[]) else None
+      let num_pairs = num_same_rank ranks_list 0 in
+      let pairs_list = same_rank_lst_two_pair ranks_list []  in
+      let has_pair_ordered_list = has_two_pair_helper pairs_list ranks_list in
+      if num_pairs =2 then Some (3,has_pair_ordered_list) else None
 
 (*[all_card_combinations k c_list] returns all possible combinations of k elements from
   list [c_list]*)
@@ -253,7 +283,7 @@ let rec all_card_combinations k c_list =
       | h :: t -> List.map (fun x -> h :: x) (all_card_combinations (k - 1) t) :: all_combs_helper t in
     List.concat (all_combs_helper c_list)
 
-(**)
+(*[all_players player st] is a list of all possible 5-card combinations for the player*)
 let all_player_cards player st =
   let p_hand = player.two_cards in
   match (snd st.table) with
