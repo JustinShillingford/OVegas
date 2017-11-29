@@ -231,7 +231,7 @@ is greater than c2's, -1 if its less, or 0 if they are equivalent*)
         has_full_house c_list != None) then None
     else
       let num_pairs = num_same_rank ranks_list 0 in
-      if num_pairs =1 then Some (2,(num_same_rank_highest ranks_list 0)::[]) else None
+      if num_pairs =1 then Some (2,(num_same_rank_highest ranks_list 0)::2::2::2::2::[]) else None
 
 (*still needs work*)
   let has_two_pair c_list =
@@ -240,7 +240,7 @@ is greater than c2's, -1 if its less, or 0 if they are equivalent*)
         has_full_house c_list != None) then None
     else
       let num_pairs = num_same_rank ranks_list 0  in
-      if num_pairs =2 then Some (3,(num_same_rank_highest ranks_list 0)::[]) else None
+      if num_pairs =2 then Some (3,(num_same_rank_highest ranks_list 0)::2::2::2::2::[]) else None
 
 (*[all_card_combinations k c_list] returns all possible combinations of k elements from
   list [c_list]*)
@@ -318,16 +318,21 @@ let is_p1_best_hand p1_cards p2_cards =
 (*[compare_for_sort_hands hand1 hand2] returns 1 is hand1 is better than hand2,
   -1 if its worse, or 0 if hand1 and hand2 are tied*)
 let compare_for_sort_hands hand1 hand2 =
-  if is_p1_best_hand (highest_hand hand1) (highest_hand hand2) then 1
-  else if is_p1_best_hand (highest_hand hand2) (highest_hand hand1) then -1
-  else 0
+  try
+    begin
+      if is_p1_best_hand (highest_hand hand1) (highest_hand hand2) then 1
+      else if is_p1_best_hand (highest_hand hand2) (highest_hand hand1) then -1
+      else 0
+    end
+  with
+  |Tie -> 0 (*very important catch in case there is a tie among the combination of a player's hands*)
 
 (*[player_best_hand player st] returns the best hand of the 21 different combinations
   a player can make with his 2 cards and the shared cards on the table at state [st]*)
 let player_best_hand player st =
   let all_poss_five_cards = all_player_cards player st in
   let sorted_combs = List.sort compare_for_sort_hands (all_poss_five_cards) in
-  let p_best_hand = List.nth sorted_combs 20 in
+  let p_best_hand = List.nth sorted_combs ((List.length sorted_combs) -1) in
   p_best_hand
 
 (*[game_best_player_hand p1 p2 st] returns the best player at the state [st]*)
