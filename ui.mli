@@ -18,4 +18,8 @@ val print_four_cards : Card.card -> Card.card -> Card.card -> Card.card -> unit
 val print_five_cards : Card.card -> Card.card -> Card.card -> Card.card -> Card.card -> unit
 
 (* [print_pot p] is the printed representation of the pot *)
-val print_pot : State.pot -> unit
+val print_pot : int -> unit
+
+(* [print_no_cards p] is the ASCII representation of empty space with the pot
+ *  in the center *)
+val print_no_cards : int -> unit
