@@ -29,10 +29,6 @@ let print_facedown () =
   let l7 = "                └─────────┘ └─────────┘\n" in
   print_string (l1 ^ l2 ^ l3 ^ l4 ^ l5 ^ l6 ^ l7)
 
-let print_no_cards () =
-  let e = "\n" in
-  print_string (e ^ e ^ e ^ e ^ e ^ e ^ e)
-
 let print_two_cards (r1, s1) (r2, s2) =
   let r1_str = rank_to_char r1 in
   let s1_str = suit_to_char s1 in
@@ -105,3 +101,8 @@ let print_five_cards (r1,s1) (r2,s2) (r3,s3) (r4,s4) (r5,s5) =
 let print_pot p =
   print_string ("\t\t\tPot: $" ^ (string_of_int p) ^ "\n")
 
+let print_no_cards p =
+  let e = "\n" in
+  print_string (e ^ e ^ e);
+  print_pot p;
+  print_string (e ^ e ^ e);
