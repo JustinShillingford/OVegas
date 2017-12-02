@@ -4,7 +4,12 @@ open Table
 open Command
 
 let build_table s =
-  failwith "Unimplemented"
+  let players = s.players in
+  let round = s.round in
+  let table = s.table in
+  let pot = s.pot in
+
+  
 
 (* This function assumes there's only two players  *)
 let next_player plist old_p =
