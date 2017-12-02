@@ -25,6 +25,7 @@ let rec repl st curr_player =
       match user_input with
       | Call -> begin
         print_endline ("You have just Called.");
+        
         repl next_state next_player
       end
       | Fold -> begin

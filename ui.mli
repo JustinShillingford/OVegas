@@ -16,3 +16,6 @@ val print_four_cards : Card.card -> Card.card -> Card.card -> Card.card -> unit
 (* [print_five_cards (r1,s1) (r2,s2) (r3,s3) (r4,s4) (r5,s5)] is the ASCII 
  *  representation of five faceup cards *)
 val print_five_cards : Card.card -> Card.card -> Card.card -> Card.card -> Card.card -> unit
+
+(* [print_pot p] is the printed representation of the pot *)
+val print_pot : State.pot -> unit
