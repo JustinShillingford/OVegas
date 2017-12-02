@@ -100,3 +100,4 @@ let print_five_cards (r1,s1) (r2,s2) (r3,s3) (r4,s4) (r5,s5) =
 
 let print_pot p =
   print_string ("\t\t\tPot: $" ^ (string_of_int p) ^ "\n")
+

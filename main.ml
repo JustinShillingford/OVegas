@@ -3,6 +3,9 @@ open Player
 open Table
 open Command
 
+let build_table plyrs pot tbl =
+  failwith "Unimplemented"
+
 (* This function assumes there's only two players  *)
 let next_player plist old_p =
   match plist with
@@ -25,7 +28,7 @@ let rec repl st curr_player =
       match user_input with
       | Call -> begin
         print_endline ("You have just Called.");
-        
+
         repl next_state next_player
       end
       | Fold -> begin

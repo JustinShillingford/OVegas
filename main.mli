@@ -1,3 +1,6 @@
+(* [build_table plyrs pot tbl] is the ASCII representation of the table *)
+val build_table : State.players -> State.pot -> Table.table -> unit
+
 (* [repl st str] is the repl loop that the game uses by looking at the
    current state [st] and the command [str] issued by the player.
    [p] is the player who has just inputted a command into the repl.  *)
