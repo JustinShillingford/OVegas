@@ -18,9 +18,7 @@ let next_player plist old_p =
 let rec repl st curr_player =
   print_endline ("Enter an action.");
   print_string "> ";
-  let user_input =
-    match read_line () with
-    | inp -> parse inp in
+  let user_input = parse (read_line ()) in
   let next_state = do' st curr_player user_input in
   let next_player = (next_player st.players curr_player) in
   match user_input with
