@@ -2,14 +2,28 @@ open State
 open Player
 open Table
 open Command
+open Ui
 
 let build_table s =
   let players = s.players in
   let round = s.round in
   let table = s.table in
   let pot = s.pot in
+  let human = List.hd players in
+  let ai = List.nth players 1 in
+  let humanCards = human.two_cards in
+  let aiCards = ai.two_cards in
 
-  
+  if (round <= 1) then begin
+    print_facedown () in
+    print_no_cards
+    print_two_cards humanCards.hd (List.nth humanCards 1)
+  end
+  else if (round == 2) then begin
+    print_facedown () in
+    print_three_cards
+    print_two_cards humanCards.hd (List.nth humanCards 1)
+  end
 
 (* This function assumes there's only two players  *)
 let next_player plist old_p =

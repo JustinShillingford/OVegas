@@ -29,6 +29,10 @@ let print_facedown () =
   let l7 = "                └─────────┘ └─────────┘\n" in
   print_string (l1 ^ l2 ^ l3 ^ l4 ^ l5 ^ l6 ^ l7)
 
+let print_no_cards () =
+  let e = "\n" in
+  print_string (e ^ e ^ e ^ e ^ e ^ e ^ e)
+
 let print_two_cards (r1, s1) (r2, s2) =
   let r1_str = rank_to_char r1 in
   let s1_str = suit_to_char s1 in
