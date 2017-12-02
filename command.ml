@@ -1,4 +1,4 @@
-type command = Call | Fold | Bet of int | Quit
+type command = Call | Fold | Bet of int | Check | Raise of int | Quit
 
 exception Illegal
 
