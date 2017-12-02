@@ -2,55 +2,79 @@ open State
 open Player
 open Table
 open Command
+open Ai
 open Ui
 
-(* This function assumes there's only two players  *)
-let next_player plist old_p =
-  match plist with
-  | x::y::[] -> begin
-      let p1 = x in let p2 = y in
-      if (old_p = p1) then p2 else p1
-    end
-  | _ -> failwith "johanna messed up and/or there was more than two players???"
-
-(* TODO: Remove curr_player as argument; not a parameter for do' anymore *)
 (* TODO: Print message from next_state *)
-let rec repl st curr_player =
-  print_endline ("Enter an action.");
-  print_string "> ";
-  let user_input =
-    match read_line () with
-    | inp -> parse inp in
-  let next_state = do' st curr_player user_input in
-  let next_player = (next_player st.players curr_player) in
-  match user_input with
-  | Call -> begin
-      print_endline ("You have just Called.");
-      build_table next_state;
-      (* print_endline next_state.message; *)
-      repl next_state next_player
-    end
-  | Fold -> begin
-      print_endline ("You have just Folded.");
-      build_table next_state;
-      repl next_state next_player
-    end
-  | Bet(i) -> begin
-      print_endline ("You have just Bet $" ^ string_of_int i ^ ".");
-      build_table next_state;
-      repl next_state next_player
-    end
-  | Check -> begin
-      print_endline ("You have Checked.");
-      build_table next_state;
-      repl next_state next_player
-    end
-  | Raise(i) -> begin
-      print_endline ("You have Raised by $" ^ string_of_int i ^ ".");
-      build_table next_state;
-      repl next_state next_player
-    end
-  | Quit -> ()
+let rec repl st =
+  if (is_human st) then begin
+    print_endline ("Enter an action.");
+    print_string "> ";
+    let user_input = parse (read_line ()) in
+    let next_state = do' st user_input in
+    match user_input with
+    | Call -> begin
+        print_endline ("You have just Called.");
+        build_table next_state;
+        (* print_endline next_state.message; *)
+  
+        repl next_state
+      end
+    | Fold -> begin
+        print_endline ("You have just Folded.");
+        build_table next_state;
+        repl next_state
+      end
+    | Bet(i) -> begin
+        print_endline ("You have just Bet $" ^ string_of_int i ^ ".");
+        build_table next_state;
+        repl next_state
+      end
+    | Check -> begin
+        print_endline ("You have Checked.");
+        build_table next_state;
+        repl next_state
+      end
+    | Raise(i) -> begin
+        print_endline ("You have Raised by $" ^ string_of_int i ^ ".");
+        build_table next_state;
+        repl next_state
+      end
+    | Quit -> ()
+  end
+  else (* AI's turn *) begin
+    let ai_input = ai_command st in
+    let next_state = do' st ai_input in
+    match ai_input with
+    | Call -> begin
+        print_endline ("AI has just Called.");
+        build_table next_state;
+        (* print_endline next_state.message; *)
+
+        repl next_state
+      end
+    | Fold -> begin
+        print_endline ("AI has just Folded.");
+        build_table next_state;
+        repl next_state
+      end
+    | Bet(i) -> begin
+        print_endline ("AI has just Bet $" ^ string_of_int i ^ ".");
+        build_table next_state;
+        repl next_state
+      end
+    | Check -> begin
+        print_endline ("AI has Checked.");
+        build_table next_state;
+        repl next_state
+      end
+    | Raise(i) -> begin
+        print_endline ("AI has Raised by $" ^ string_of_int i ^ ".");
+        build_table next_state;
+        repl next_state
+      end
+    | Quit -> ()
+  end
 
 let playgame () =
   ANSITerminal.(print_string [red] "\nWelcome to OVegas, the OCaml Texas Hold'em!\n");
@@ -64,6 +88,8 @@ let playgame () =
    * players. Need to find way to use these names in st for the repl. *)
   let player1 = init_player player1_name (shuffle (new_deck ())) in
   let player2 = init_player player2_name (snd player1) in
-  repl (initial_state [fst player1; fst player2] (snd player2)) (fst player1)
+  let init_st = initial_state [fst player1; fst player2] (snd player2) in 
+  build_table init_st;
+  repl init_st
 
 let () = playgame ()

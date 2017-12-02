@@ -113,7 +113,7 @@ let print_no_cards p =
 
 let build_table s =
   let players = s.players in
-  let round = s.round in
+  let round = s.bet_round in
   let table = s.table in
   let pot = s.pot in
   let human = List.hd players in

@@ -14,37 +14,3 @@ let string_of_hand h =
   match h with
   | f::s::[] -> "This hand has a " ^ string_of_card f ^ " and a " ^ string_of_card s
   | _ -> failwith "something is seriously wrong here."
-
-(* let is_small_blind p st =
-  failwith "Unimplemented"
-
-let is_big_blind p st =
-  failwith "Unimplemented"
-
-let has_pair p t =
-  failwith "Unimplemented"
-
-let has_two_pair p t =
-  failwith "Unimplemented"
-
-let has_three_kind p t =
-  failwith "Unimplemented"
-
-let has_straight p t =
-  failwith "Unimplemented"
-
-let has_flush p t =
-  failwith "Unimplemented"
-
-let has_full_house p t =
-  failwith "Unimplemented"
-
-let has_four_kind p t =
-  failwith "Unimplemented"
-
-let has_straight_flush p t =
-  failwith "Unimplemented"
-
-let has_royal_flush p t =
-  failwith "Unimplemented"
- *)
