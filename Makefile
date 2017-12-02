@@ -1,5 +1,5 @@
 default:
-	ocamlbuild -use-ocamlfind -pkg oUnit2 test.byte
+	ocamlbuild -use-ocamlfind test.byte && ./test.byte
 
 check:
 	bash checkenv.sh && bash checktypes.sh
