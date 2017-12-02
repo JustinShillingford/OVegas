@@ -3,7 +3,7 @@ open Player
 open Table
 open Command
 
-let build_table plyrs pot tbl =
+let build_table s =
   failwith "Unimplemented"
 
 (* This function assumes there's only two players  *)
