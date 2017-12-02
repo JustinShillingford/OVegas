@@ -88,8 +88,14 @@ let playgame () =
    * players. Need to find way to use these names in st for the repl. *)
   let player1 = init_player player1_name (shuffle (new_deck ())) in
   let player2 = init_player player2_name (snd player1) in
+<<<<<<< HEAD
   let init_st = initial_state [fst player1; fst player2] (snd player2) in 
   build_table init_st;
   repl init_st
+=======
+  let init_st = initial_state [fst player1; fst player2] (snd player2) in
+  build_table init_st;
+  repl init_st (fst player1)
+>>>>>>> origin/master
 
 let () = playgame ()
