@@ -4,54 +4,6 @@ open Table
 open Command
 open Ui
 
-exception Mismatch
-
-let build_table s =
-  let players = s.players in
-  let round = s.round in
-  let table = s.table in
-  let pot = s.pot in
-  let human = List.hd players in
-  let ai = List.nth players 1 in
-  let humanCards = human.two_cards in
-  let aiCards = ai.two_cards in
-  let middleCards = match snd table with
-                    | None -> []
-                    | Some cards -> cards
-  in
-  let middleSize = List.length middleCards in
-
-  if (round <= 1 && middleSize == 0) then begin
-    print_facedown ();
-    print_no_cards pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1)
-  end
-  else if (round == 2 && middleSize == 3) then begin
-    print_facedown ();
-    print_three_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2);
-    print_pot pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1)
-  end
-  else if (round == 3 && middleSize == 4) then begin
-    print_facedown ();
-    print_four_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3);
-    print_pot pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1)
-  end
-  else if (round == 4 && middleSize == 5) then begin
-    print_facedown ();
-    print_five_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3) (List.nth middleCards 4);
-    print_pot pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1)
-  end
-  else if (round == 5 && middleSize == 5) then begin
-    print_two_cards (List.hd aiCards) (List.nth aiCards 1);
-    print_five_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3) (List.nth middleCards 4);
-    print_pot pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1)
-  end
-  else raise Mismatch
-
 (* This function assumes there's only two players  *)
 let next_player plist old_p =
   match plist with

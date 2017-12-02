@@ -23,3 +23,6 @@ val print_pot : int -> unit
 (* [print_no_cards p] is the ASCII representation of empty space with the pot
  *  in the center *)
 val print_no_cards : int -> unit
+
+(* [build_table plyrs pot tbl] is the ASCII representation of the table *)
+val build_table : State.state -> unit
