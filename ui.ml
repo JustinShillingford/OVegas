@@ -1,4 +1,5 @@
 open Card
+open State
 
 (* [suit_to_char] is the Unicode character representation of the given suit *)
 let suit_to_char = function
