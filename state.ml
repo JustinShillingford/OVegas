@@ -11,184 +11,188 @@ exception Tie
 exception GameOver of string
 exception InvalidCommand of command
 
-type state = {players: player list; play_round: int; bet_round: int; pot:int; table: table; latest_bet:int; curr_player: player; message: string; first_action: bool; latest_st_command: string option}
+type state = {players: player list; play_round: int; bet_round: int; pot:int;
+              table: table; latest_bet:int; curr_player: player; message: string;
+              first_action: bool; latest_st_command: string option}
 
 
 let initial_state player_list deck =
-  {players = player_list; play_round = 0; bet_round = 0; pot = 0; table=(deck, None); latest_bet=0; curr_player=(List.nth player_list 0); message= "";first_action=true; latest_st_command=None}
+  {players = player_list; play_round = 0; bet_round = 0; pot = 0; table=(deck, None);
+   latest_bet=0; curr_player=(List.nth player_list 0); message= "";first_action=true;
+   latest_st_command=None}
 
 (*[make_flop_cards st] returns an updated state once the initial flop occurs*)
 let make_flop_cards st =
   let (new_deck1, new_shared_cards1) = flip_new_card (st.table) in
   let (new_deck2, new_shared_cards2) = flip_new_card (new_deck1, new_shared_cards1) in
-    let new_table = flip_new_card (new_deck2, new_shared_cards2) in
+  let new_table = flip_new_card (new_deck2, new_shared_cards2) in
   {st with table = new_table; bet_round =st.bet_round+1}
 
 (*[make_flop_cards st] returns an updated state once the 4th or 5th card of the
-shared cards is flipped onto the table*)
+  shared cards is flipped onto the table*)
 let make_turn_or_river_card st =
   let new_table = flip_new_card st.table  in
   {st with table = new_table; bet_round =st.bet_round+1; latest_bet=0}
 
 (* [card_list_wo_options c_option_list] is a helper function that returns the card list
-without the options*)
+   without the options*)
 let card_list_wo_options c_option_list =
   match c_option_list with
   |None -> []
   |Some x -> x
 
 
- let string_of_state st =
+let string_of_state st =
   let state_string = "You are currently on round: " ^(string_of_int st.play_round) ^
-  " and bet round " ^ (string_of_int st.bet_round) ^ ". The pot is " ^
-  (string_of_int st.pot) ^ ". And the latest bet was " ^
-  (string_of_int st.latest_bet) ^ ". The current shared cards in
+                     " and bet round " ^ (string_of_int st.bet_round) ^ ". The pot is " ^
+                     (string_of_int st.pot) ^ ". And the latest bet was " ^
+                     (string_of_int st.latest_bet) ^ ". The current shared cards in
                the middle of the table are" in
   let shared_cards = card_list_wo_options (snd st.table) in
   let st_shared_cards= List.map string_of_card shared_cards in
   let state_string2=
     match st_shared_cards with
-  |[] ->"Flop has not occured yet" ;
-  |c1::c2::c3::c4::c5::[] -> c1 ^ ", " ^ c2 ^ ", " ^ c3 ^ ", " ^ c4 ^ ", " ^ c5
-  |c1::c2::c3::c4::[] ->c1 ^ ", " ^ c2 ^ ", " ^ c3 ^ ", " ^ c4
-  |c1::c2::c3::[] -> c1 ^ ", " ^ c2 ^ ", " ^ c3
-  |_-> raise Illegal in
+    |[] ->"Flop has not occured yet" ;
+    |c1::c2::c3::c4::c5::[] -> c1 ^ ", " ^ c2 ^ ", " ^ c3 ^ ", " ^ c4 ^ ", " ^ c5
+    |c1::c2::c3::c4::[] ->c1 ^ ", " ^ c2 ^ ", " ^ c3 ^ ", " ^ c4
+    |c1::c2::c3::[] -> c1 ^ ", " ^ c2 ^ ", " ^ c3
+    |_-> raise Illegal in
   state_string ^ state_string2
 
-  (* This function assumes there's only two players  *)
-  let next_player st =
-    match st.players with
-    | x::y::[] -> begin
+(* This function assumes there's only two players  *)
+let next_player st =
+  match st.players with
+  | x::y::[] -> begin
       let p1 = x in let p2 = y in
       if (st.curr_player = p1) then p2 else p1
     end
-    | _ -> failwith "johanna messed up and/or there was more than two players???"
+  | _ -> failwith "johanna messed up and/or there was more than two players???"
 
 
 
 (*[compare_cards c1 c2] compares the ranks of 2 cards and returns 1 if c1's rank
-is greater than c2's, -1 if its less, or 0 if they are equivalent*)
-  let compare_cards c1 c2 =
-    if (fst c1) > (fst c2) then 1
-    else if (fst c2) > (fst c1) then -1
-    else 0
+  is greater than c2's, -1 if its less, or 0 if they are equivalent*)
+let compare_cards c1 c2 =
+  if (fst c1) > (fst c2) then 1
+  else if (fst c2) > (fst c1) then -1
+  else 0
 
 (*[sorted_ranks_list card_list] returns a list of cards sorted by their ranks*)
-  let sorted_ranks_list card_list =
-    let sorted_cards = List.sort compare_cards card_list in
-    let ranks_of_sorted = List.map (fun x -> fst x) sorted_cards in
-    ranks_of_sorted
+let sorted_ranks_list card_list =
+  let sorted_cards = List.sort compare_cards card_list in
+  let ranks_of_sorted = List.map (fun x -> fst x) sorted_cards in
+  ranks_of_sorted
 
 (*[suits_list card_list] returns a list of the suits of cards in [card_list]*)
-  let suits_list card_list =
-    let list_of_suits = List.map (fun x -> snd x) card_list in
-    list_of_suits
+let suits_list card_list =
+  let list_of_suits = List.map (fun x -> snd x) card_list in
+  list_of_suits
 
 (*[highest_rank card_list] returns the highest card in a hand of 5 cards*)
-  let highest_rank card_list =
-    let ranks_list = sorted_ranks_list card_list in
-    match ranks_list with
-    |r1::r2::r3::r4::r5::[] -> r5
-    |_ -> raise Invalid
+let highest_rank card_list =
+  let ranks_list = sorted_ranks_list card_list in
+  match ranks_list with
+  |r1::r2::r3::r4::r5::[] -> r5
+  |_ -> raise Invalid
 
 (*[has_high_card card_list] returns tuple consisting of 1 and the list in desc order *)
-  let has_high_card card_list =
-    let ranks_list = sorted_ranks_list card_list in
-    let desc_order = List.rev ranks_list in
-    Some (1, desc_order)
+let has_high_card card_list =
+  let ranks_list = sorted_ranks_list card_list in
+  let desc_order = List.rev ranks_list in
+  Some (1, desc_order)
 
 (*[has_four_kind card_list] returns None or a tuple consisting of 8 and the list such that the
   4 cards of same rank are close to front of list, and the other card is last element*)
-  let has_four_kind card_list =
-    let ranks_list = sorted_ranks_list card_list in
-    match ranks_list with
-    |r1::r2::r3::r4::r5::[] -> if ((r1=r2) && (r2=r3) && (r3=r4)) then
-        Some (8,(r1::r2::r3::r4::r5::[]))
-      else if ((r2=r3) && (r3=r4) && (r4=r5)) then Some (8,(r2::r3::r4::r5::r1::[]))
-      else None
-    |_ -> raise Invalid
+let has_four_kind card_list =
+  let ranks_list = sorted_ranks_list card_list in
+  match ranks_list with
+  |r1::r2::r3::r4::r5::[] -> if ((r1=r2) && (r2=r3) && (r3=r4)) then
+      Some (8,(r1::r2::r3::r4::r5::[]))
+    else if ((r2=r3) && (r3=r4) && (r4=r5)) then Some (8,(r2::r3::r4::r5::r1::[]))
+    else None
+  |_ -> raise Invalid
 
 (*[has_three_kind card_list] returns None or a tuple consisting of 4 and the list such that the
   3 cards of same rank are close to front of list, and the other cards follow in
   ascending order*)
-  let has_three_kind card_list =
-    let ranks_list = sorted_ranks_list card_list in
-    match ranks_list with
-    |r1::r2::r3::r4::r5::[] -> if ((r1=r2) && (r2=r3)) then Some (4,(r1::r2::r3::r4::r4::[]))
-      else if ((r2=r3) && (r3=r4)) then Some (4,(r2::r3::r4::r5::r1::[]))
-      else if ((r3=r4) && (r4=r5)) then Some (4,(r3::r4::r5::r2::r1::[]))
-      else None
-    |_ -> raise Invalid
+let has_three_kind card_list =
+  let ranks_list = sorted_ranks_list card_list in
+  match ranks_list with
+  |r1::r2::r3::r4::r5::[] -> if ((r1=r2) && (r2=r3)) then Some (4,(r1::r2::r3::r4::r4::[]))
+    else if ((r2=r3) && (r3=r4)) then Some (4,(r2::r3::r4::r5::r1::[]))
+    else if ((r3=r4) && (r4=r5)) then Some (4,(r3::r4::r5::r2::r1::[]))
+    else None
+  |_ -> raise Invalid
 
 (*[has_straight card_list] returns None or a tuple consisting of 5 and the 5 cards in
   ascending order*)
-  let has_straight c_list =
-    let ranks_list = sorted_ranks_list c_list in
-    match ranks_list with
-    |r1::r2::r3::r4::r5::[]-> if ((r1=r2 -1) && (r2=r3 -1) &&(r3=r4 -1)&&(r4=r5 -1)) then
-        Some (5,(r5::r4::r3::r2::r1::[]))
-      else if ((r1=2) && (r2=3) && (r3=4) && (r4=5) &&(r5=14)) then
-        Some (5,(r4::r3::r2::r1::r5::[]))
-      else None
-    |_ -> None (*not sure if this is good design choice or if i should raise invalid??*)
+let has_straight c_list =
+  let ranks_list = sorted_ranks_list c_list in
+  match ranks_list with
+  |r1::r2::r3::r4::r5::[]-> if ((r1=r2 -1) && (r2=r3 -1) &&(r3=r4 -1)&&(r4=r5 -1)) then
+      Some (5,(r5::r4::r3::r2::r1::[]))
+    else if ((r1=2) && (r2=3) && (r3=4) && (r4=5) &&(r5=14)) then
+      Some (5,(r4::r3::r2::r1::r5::[]))
+    else None
+  |_ -> None (*not sure if this is good design choice or if i should raise invalid??*)
 
 (*[has_flush card_list] returns None or a tuple consisting of 6 and the 5 cards in
   descending order*)
-  let has_flush c_list =
-    let suit_list = suits_list c_list in
-    match suit_list with
-    |s1::s2::s3::s4::s5::[]-> if ((s1=s2) && (s2=s3) && (s3=s4) && (s4=s5)) then
-        let ranks_list = List.rev (sorted_ranks_list c_list) in Some (6,ranks_list) else None
-    |_-> None
+let has_flush c_list =
+  let suit_list = suits_list c_list in
+  match suit_list with
+  |s1::s2::s3::s4::s5::[]-> if ((s1=s2) && (s2=s3) && (s3=s4) && (s4=s5)) then
+      let ranks_list = List.rev (sorted_ranks_list c_list) in Some (6,ranks_list) else None
+  |_-> None
 
 (*[has_straight_flush card_list] returns None or a tuple consisting of 9 and the 5 cards in
   descending order*)
-  let has_straight_flush c_list =
-    let check_if_straight = has_straight c_list in
-    let check_if_flush = has_flush c_list in
-    if (check_if_straight != None  && check_if_flush != None ) then
-      let ranks_list = List.rev (sorted_ranks_list c_list) in Some (9,ranks_list) else None
+let has_straight_flush c_list =
+  let check_if_straight = has_straight c_list in
+  let check_if_flush = has_flush c_list in
+  if (check_if_straight != None  && check_if_flush != None ) then
+    let ranks_list = List.rev (sorted_ranks_list c_list) in Some (9,ranks_list) else None
 
 (*[has_royal_flush card_list] returns None or a tuple consisting of 10 and the 5 cards in
   descending order*)
-  let has_royal_flush c_list =
-    let check_if_straight = has_straight c_list in
-    let check_if_flush = has_flush c_list in
-    let check_highest_rank = highest_rank c_list in
-    (*may need to change check_highest_rank=14*)
-    if (check_if_straight != None && check_if_flush != None && check_highest_rank=14) then
-      let ranks_list = List.rev (sorted_ranks_list c_list) in Some (10,ranks_list) else None
+let has_royal_flush c_list =
+  let check_if_straight = has_straight c_list in
+  let check_if_flush = has_flush c_list in
+  let check_highest_rank = highest_rank c_list in
+  (*may need to change check_highest_rank=14*)
+  if (check_if_straight != None && check_if_flush != None && check_highest_rank=14) then
+    let ranks_list = List.rev (sorted_ranks_list c_list) in Some (10,ranks_list) else None
 
 (*[has_full_house card_list] returns None or a tuple consisting of 10 and the 5 cards in
   descending order*)
-  let has_full_house c_list =
-    let ranks_list = sorted_ranks_list c_list in
-    match ranks_list with
-    |r1::r2::r3::r4::r5::[] -> if ((r1=r2) && (r2=r3) && (r4=r5)) then
-        Some (7,(r1::r2::r3::r4::r5::[]))
-      else if ((r3=r4) && (r4=r5) && (r1=r2)) then
-        Some (7,(r3::r4::r5::r1::r2::[]))
-      else None
-    |_ -> raise Invalid
+let has_full_house c_list =
+  let ranks_list = sorted_ranks_list c_list in
+  match ranks_list with
+  |r1::r2::r3::r4::r5::[] -> if ((r1=r2) && (r2=r3) && (r4=r5)) then
+      Some (7,(r1::r2::r3::r4::r5::[]))
+    else if ((r3=r4) && (r4=r5) && (r1=r2)) then
+      Some (7,(r3::r4::r5::r1::r2::[]))
+    else None
+  |_ -> raise Invalid
 
 (*[num_same_rank c_list acc] returns the number of pairs in a rank list*)
-  let rec num_same_rank r_list acc =
-    match r_list with
-    |[]-> acc
-    |h::t-> if List.mem h t then num_same_rank t (acc+1)  else num_same_rank t acc
+let rec num_same_rank r_list acc =
+  match r_list with
+  |[]-> acc
+  |h::t-> if List.mem h t then num_same_rank t (acc+1)  else num_same_rank t acc
 
 (*[num_same_rank_highest c_list acc] returns the highest pair in a rank list*)
-  let rec num_same_rank_highest r_list acc =
-    match r_list with
-    |[]-> acc
-    |h::t-> if List.mem h t then num_same_rank_highest t h  else num_same_rank_highest t acc
+let rec num_same_rank_highest r_list acc =
+  match r_list with
+  |[]-> acc
+  |h::t-> if List.mem h t then num_same_rank_highest t h  else num_same_rank_highest t acc
 
 (*[same_rank_lst_two_pair c_list acc] returns a list of the pairs in a rank list*)
-  let rec same_rank_lst_two_pair r_list acc =
-    match r_list with
-    |[]-> acc
-    |h::t-> if List.mem h t then same_rank_lst_two_pair t (h::h::acc)  (*put the rank twice since it's a pair*)
-      else same_rank_lst_two_pair t acc
+let rec same_rank_lst_two_pair r_list acc =
+  match r_list with
+  |[]-> acc
+  |h::t-> if List.mem h t then same_rank_lst_two_pair t (h::h::acc)  (*put the rank twice since it's a pair*)
+    else same_rank_lst_two_pair t acc
 
 (*[has_pair_helper p_rank ranks_lst] takes the pair in the original [ranks_lst] and
   returns a list with same elements in r_list with order such that pair is left-most and remaining
@@ -200,16 +204,16 @@ let has_pair_helper p_rank ranks_lst =
   initial_list@ordered_has_pair_list
 
 (*[has_pair c_list] returns None or a tuple consisting of 2 and the 5 cards in
-an order such that pair is left-most and remaining ranks are in descending order*)
-  let has_pair c_list =
-    let ranks_list = sorted_ranks_list c_list in
-    if (has_three_kind c_list != None || has_four_kind c_list != None ||
-        has_full_house c_list != None) then None
-    else
-      let num_pairs = num_same_rank ranks_list 0 in
-      let pair_rank = num_same_rank_highest ranks_list 0 in
-      let has_pair_ordered_list = has_pair_helper pair_rank ranks_list in
-      if num_pairs =1 then Some (2,has_pair_ordered_list) else None
+  an order such that pair is left-most and remaining ranks are in descending order*)
+let has_pair c_list =
+  let ranks_list = sorted_ranks_list c_list in
+  if (has_three_kind c_list != None || has_four_kind c_list != None ||
+      has_full_house c_list != None) then None
+  else
+    let num_pairs = num_same_rank ranks_list 0 in
+    let pair_rank = num_same_rank_highest ranks_list 0 in
+    let has_pair_ordered_list = has_pair_helper pair_rank ranks_list in
+    if num_pairs =1 then Some (2,has_pair_ordered_list) else None
 
 (*[has_pair_helper p_rank ranks_lst] takes a list of pairs in the original [ranks_lst] and
   returns a list with same elements in r_list with order such that pairs are left-most
@@ -222,14 +226,14 @@ let has_two_pair_helper p_list r_list =
 (*[has_two_pair c_list] returns None or a tuple consisting of 3 and the 5 cards in
   an order such that pairs are left-most in descending order and remaining rank is rightmost*)
 let has_two_pair c_list =
-    let ranks_list = sorted_ranks_list c_list in
-    if (has_three_kind c_list != None || has_four_kind c_list != None ||
-        has_full_house c_list != None) then None
-    else
-      let num_pairs = num_same_rank ranks_list 0 in
-      let pairs_list = same_rank_lst_two_pair ranks_list []  in
-      let has_pair_ordered_list = has_two_pair_helper pairs_list ranks_list in
-      if num_pairs =2 then Some (3,has_pair_ordered_list) else None
+  let ranks_list = sorted_ranks_list c_list in
+  if (has_three_kind c_list != None || has_four_kind c_list != None ||
+      has_full_house c_list != None) then None
+  else
+    let num_pairs = num_same_rank ranks_list 0 in
+    let pairs_list = same_rank_lst_two_pair ranks_list []  in
+    let has_pair_ordered_list = has_two_pair_helper pairs_list ranks_list in
+    if num_pairs =2 then Some (3,has_pair_ordered_list) else None
 
 (*[all_card_combinations k c_list] returns all possible combinations of k elements from
   list [c_list]
@@ -398,6 +402,71 @@ let do_raise st m =
     raise InvalidRaise
 
 
+let ai_command st=
+  Call
+
+
+
+(*makes a new round after a showdown*)
+let new_play_round_st st =
+  let new_deck = shuffle(new_deck()) in
+  let new_st = {st with table=(new_deck, None)} in
+  let p1 = List.nth st.players 0 in
+  let p2 = List.nth st.players 1 in
+  let ((t, None), c1, c2) = make_hand new_deck in
+  let ((t2, None), c3, c4) = make_hand t in
+  let new_p1={p1 with two_cards = c1::c2::[]} in
+  let new_p2={p2 with two_cards = c3::c4::[]} in
+  let new_player_list = new_p1::new_p2::[] in
+  let new_st2 = {st with players = new_player_list; table=(t2, None)} in
+  new_st2
+
+
+
+(*if only one player is remaining then you do round over *)
+(*game over could be raised from the loop and in that case you want to quit game!*)
+let round_over st =
+  let p1 = List.nth st.players 0 in
+  let p2 = List.nth st.players 1 in
+  try
+    begin
+      let winning_player = if (p1.remaining_in_round=false) then p2
+        else if (p2.remaining_in_round=false) then p1
+        else game_best_player_hand p1 p2 st in
+      let p1_won_money = if p1 = winning_player then st.pot else 0 in
+      let new_p1 = {p1 with money=p1.money + p1_won_money; latest_command=None; remaining_in_round=true} in
+      let p2_won_money = if p2=winning_player then st.pot else 0 in
+      let new_p2 = {p2 with money=p2.money + p2_won_money; latest_command=None; remaining_in_round=true} in
+
+      if (new_p1.money<10 || new_p1.money<0) then
+        GameOver new_p2.id
+      else if (new_p2.money<20 || new_p2.money< 0) then
+        GameOver new_p1.id
+
+      else
+        let new_player_list = [new_p1; new_p2] in
+        let new_curr_player = List.nth st.players 0 in
+        let new_st = {st with players = new_player_list; bet_round=0; play_round=st.play_round+1; pot=0; latest_bet=0; curr_player=new_curr_player} in
+        let new_st_with_table = new_play_round_st(new_st) in
+        new_st_with_table
+    end
+  with
+  |Tie ->
+    let new_p1 = {p1 with money=p1.money + (st.pot/2); latest_command=None; remaining_in_round=true} in
+    let new_p2  = {p2 with money=p2.money + (st.pot/2);  latest_command=None; remaining_in_round=true} in
+    if (new_p1.money<10 || new_p1.money<0) then
+      GameOver new_p2.id
+    else if (new_p2.money<20 || new_p2.money< 0) then
+      GameOver new_p1.id
+
+    else
+      let new_player_list = [new_p1; new_p2] in
+      let new_curr_player = List.nth st.players 0 in
+      let new_st = {st with players = new_player_list; bet_round=0; play_round=st.play_round+1; pot=0; latest_bet=0; curr_player=new_curr_player} in
+      let new_st_with_table = new_play_round_st(new_st) in
+      new_st_with_table
+
+
 
 let cmd_ends_betting_round st c =
   match c with
@@ -434,13 +503,18 @@ let is_valid_command st c=
 
 let do' st c=
   if (is_valid_command st c) then
-  match c with
-  | Call -> do_call st
-  | Fold ->  do_fold st
-  | Bet(x)->  do_bet st x
-  | Check -> do_check st
-  | Raise(x) -> do_raise st x
-  | Quit -> st
+    (let st' = (if st.bet_round=1 then fst_bet_round st
+                else if (st.bet_round=2 || st.bet_round=3 || st.bet_round=4) then other_bet_rounds st
+                else round_over st) in
+     let new_st = match c with
+       | Call -> do_call st'
+       | Fold ->  do_fold st'
+       | Bet(x)->  do_bet st' x
+       | Check -> do_check st'
+       | Raise(x) -> do_raise st' x
+       | Quit -> {st with message="Quit"}  in
+     if (cmd_ends_betting_round st c) then {new_st with bet_round = bet_round +1; first_action = true; latest_st_command =None} (*curr player also maybe??*)
+     else new_st)
   else
     raise (InvalidCommand c)
 
@@ -457,112 +531,3 @@ let blinds st=
      let new_st = {st with players= new_players_list; pot=st.pot + 10 + 20; bet_round=st.bet_round + 1; latest_bet=20; first_action=true} in
      new_st)
   |_-> st
-
-
-
-            (*
-  then (c=Call || c=(Raise x) || c=Fold)
-  else if st.first_action=true
-  then (c=Check || c=Bet(x)|| c=Fold)
-  else
-    (c=Check || c=Call || c=Fold || c=Raise) *)
-
-(*preflop*)
-let betting_fst_round st  =
-
-  (*preflop; bet round =1*)
-  let p1 = List.nth st.players 0 in
-  let p2 = List.nth st.players 1 in
-  (*let p_command= if (st.curr_player = p1) then parse (read_line())
-    else ai_command (*ai_comand would need to return either call, fold, or raise.*) in *)
-
-  if (p_command = Call || p_command = Fold || p_command = Raise x) then
-  (let new_st = if p_command = Call
-    then do' st Call
-    else if p_command = Fold then
-      do' st Fold
-    else
-      do' st (Raise x)) in
-  (*not sure about this line*) new_st
-  else
-  (*    print_endline("The command you entered was invalid for this round. Please enter a new command") *)
-  st
-
-let other_bet_rounds st =
-  (*flop; bet round =2*)
-  (*turn; bet round =3*)
-  (*river; bet round =4*)
-
-
-
-
-
-
-
-  (*makes a new round after a showdown*)
-let new_play_round_st st =
-  let new_deck = shuffle(new_deck()) in
-  let new_st = {st with table=(new_deck, None)} in
-  let p1 = List.nth st.players 0 in
-  let p2 = List.nth st.players 1 in
-  let ((t, None), c1, c2) = make_hand new_deck in
-  let ((t2, None), c3, c4) = make_hand t in
-  let new_p1={p1 with two_cards = c1::c2::[]} in
-  let new_p2={p2 with two_cards = c3::c4::[]} in
-  let new_player_list = new_p1::new_p2::[] in
-  let new_st2 = {st with players = new_player_list; table=(t2, None)} in
-  new_st2
-
-
-
-
-
-
-
-
-(*if only one player is remaining then you do round over *)
-(*game over could be raised from the loop and in that case you want to quit game!*)
-let round_over st =
-  let p1 = List.nth st.players 0 in
-  let p2 = List.nth st.players 1 in
-  try
-    begin
-      let winning_player = if (p1.remaining_in_round=false) then p2
-        else if (p2.remaining_in_round=false) then p1
-        else game_best_player_hand p1 p2 st in
-      let p1_won_money = if p1 = winning_player then st.pot else 0 in
-      let new_p1 = {p1 with money=p1.money + p1_won_money; latest_command=None; remaining_in_round=true} in
-      let p2_won_money = if p2=winning_player then st.pot else 0 in
-      let new_p2 = {p2 with money=p2.money + p2_won_money; latest_command=None; remaining_in_round=true} in
-
-      if (new_p1.money<10 || new_p1.money<0) then
-      GameOver new_p2.id
-      else if (new_p2.money<20 || new_p2.money< 0) then
-      GameOver new_p1.id
-
-      else
-        let new_player_list = [new_p1; new_p2] in
-        let new_curr_player = List.nth st.players 0 in
-        let new_st = {st with players = new_player_list; bet_round=0; play_round=st.play_round+1; pot=0; latest_bet=0; curr_player=new_curr_player} in
-        let new_st_with_table = new_play_round_st(new_st) in
-        new_st
-    end
-  with
-  |Tie ->
-    let new_p1 = {p1 with money=p1.money + (st.pot/2); latest_command=None; remaining_in_round=true} in
-    let new_p2  = {p2 with money=p2.money + (st.pot/2);  latest_command=None; remaining_in_round=true} in
-    if (new_p1.money<10 || new_p1.money<0) then
-      GameOver new_p2.id
-    else if (new_p2.money<20 || new_p2.money< 0) then
-      GameOver new_p1.id
-
-    else
-      let new_player_list = [new_p1; new_p2] in
-      let new_curr_player = List.nth st.players 0 in
-      let new_st = {st with players = new_player_list; bet_round=0; play_round=st.play_round+1; pot=0; latest_bet=0; curr_player=new_curr_player} in
-      let new_st_with_table = new_play_round_st(new_st) in
-      new_st
-
-
-      let ai_command st=
-        Call
