@@ -17,8 +17,8 @@ let rec repl st =
     let next_state = try do' st user_input with e ->
       match e with
       | InvalidBet -> print_endline "That's an invalid bet."; st
-      | InvalidCommand (c) -> ANSITerminal.(print_string [red] "That's an invalid command.\n"); st
-      | InvalidRaise -> print_endline "That's an invalid amount."; st
+      | InvalidCommand (c) -> ANSITerminal.(print_string [red] "That's an invalid command.\n\n"); st
+      | InvalidRaise -> ANSITerminal.(print_string [red] "That's an invalid amount."); st
       | GameOver (win_id) -> begin
           if (win_id = "AI") then (lose_message (); st) else (win_message (); st)
         end
@@ -56,15 +56,15 @@ let rec repl st =
     let next_state = do' st ai_input in
     match ai_input with
     | Call -> begin
-        print_endline ("AI has just Called.");        
+        print_endline ("AI has just Called.");
         repl next_state
       end
     | Fold -> begin
-        print_endline ("AI has just Folded.");        
+        print_endline ("AI has just Folded.");
         repl next_state
       end
     | Bet(i) -> begin
-        print_endline ("AI has just Bet $" ^ string_of_int i ^ ".");        
+        print_endline ("AI has just Bet $" ^ string_of_int i ^ ".");
         repl next_state
       end
     | Check -> begin
@@ -89,7 +89,7 @@ let playgame () =
   let player2 = init_player "AI" (snd player1) in
   let init_st = initial_state [fst player1; fst player2] (snd player2) in
   build_table init_st;
-  ANSITerminal.(print_string [green] "\n\t\t      GAME START\n");
+  ANSITerminal.(print_string [green] "\n\t\t      GAME START\n\n");
   repl init_st
 
 let () = playgame ()
