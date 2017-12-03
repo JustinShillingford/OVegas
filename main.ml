@@ -5,7 +5,6 @@ open Command
 open Ai
 open Ui
 
-(* TODO: Print message from next_state *)
 let rec repl st =
   if (is_human st) then begin
     print_endline ("Enter an action.");
@@ -16,28 +15,31 @@ let rec repl st =
     | Call -> begin
         print_endline ("You have just Called.");
         build_table next_state;
-        (* print_endline next_state.message; *)
-
+        print_endline next_state.message;
         repl next_state
       end
     | Fold -> begin
         print_endline ("You have just Folded.");
         build_table next_state;
+        print_endline next_state.message;        
         repl next_state
       end
     | Bet(i) -> begin
         print_endline ("You have just Bet $" ^ string_of_int i ^ ".");
         build_table next_state;
+        print_endline next_state.message;        
         repl next_state
       end
     | Check -> begin
         print_endline ("You have Checked.");
         build_table next_state;
+        print_endline next_state.message;
         repl next_state
       end
     | Raise(i) -> begin
         print_endline ("You have Raised by $" ^ string_of_int i ^ ".");
         build_table next_state;
+        print_endline next_state.message;
         repl next_state
       end
     | Quit -> ()
@@ -49,28 +51,31 @@ let rec repl st =
     | Call -> begin
         print_endline ("AI has just Called.");
         build_table next_state;
-        (* print_endline next_state.message; *)
-
+        print_endline next_state.message;
         repl next_state
       end
     | Fold -> begin
         print_endline ("AI has just Folded.");
         build_table next_state;
+        print_endline next_state.message;
         repl next_state
       end
     | Bet(i) -> begin
         print_endline ("AI has just Bet $" ^ string_of_int i ^ ".");
         build_table next_state;
+        print_endline next_state.message;
         repl next_state
       end
     | Check -> begin
         print_endline ("AI has Checked.");
         build_table next_state;
+        print_endline next_state.message;
         repl next_state
       end
     | Raise(i) -> begin
         print_endline ("AI has Raised by $" ^ string_of_int i ^ ".");
         build_table next_state;
+        print_endline next_state.message;
         repl next_state
       end
     | Quit -> ()
