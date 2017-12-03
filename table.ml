@@ -40,6 +40,7 @@ let shuffle d =
   let rec shuffle_helper acc pull_from_d =
     if (List.length pull_from_d = 0) && (List.length acc = 52) then acc
     else begin
+      Random.self_init ();
       let n = Random.int (List.length pull_from_d) in
       let chosen_card = List.nth pull_from_d n in
       let pull_from_d' = List.filter (fun x -> x <> chosen_card) pull_from_d in
