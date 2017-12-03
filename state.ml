@@ -28,7 +28,7 @@ let make_flop_cards st =
   let new_table = flip_new_card (new_deck2, new_shared_cards2) in
   {st with table = new_table; bet_round =st.bet_round+1}
 
-(*[make_flop_cards st] returns an updated state once the 4th or 5th card of the
+(*[make_turn_or_river_card st] returns an updated state once the 4th or 5th card of the
   shared cards is flipped onto the table*)
 let make_turn_or_river_card st =
   let new_table = flip_new_card st.table  in
@@ -410,7 +410,6 @@ let ai_command st=
 (*makes a new round after a showdown*)
 let new_play_round_st st =
   let new_deck = shuffle(new_deck()) in
-  let new_st = {st with table=(new_deck, None)} in
   let p1 = List.nth st.players 0 in
   let p2 = List.nth st.players 1 in
   let ((t, None), c1, c2) = make_hand new_deck in
@@ -418,8 +417,8 @@ let new_play_round_st st =
   let new_p1={p1 with two_cards = c1::c2::[]} in
   let new_p2={p2 with two_cards = c3::c4::[]} in
   let new_player_list = new_p1::new_p2::[] in
-  let new_st2 = {st with players = new_player_list; table=(t2, None)} in
-  new_st2
+  let new_st = {st with players = new_player_list; table=(t2, None)} in
+  new_st
 
 
 
@@ -439,9 +438,9 @@ let round_over st =
       let new_p2 = {p2 with money=p2.money + p2_won_money; latest_command=None; remaining_in_round=true} in
 
       if (new_p1.money<10 || new_p1.money<0) then
-        GameOver new_p2.id
+        raise (GameOver new_p2.id)
       else if (new_p2.money<20 || new_p2.money< 0) then
-        GameOver new_p1.id
+        raise (GameOver new_p1.id)
 
       else
         let new_player_list = [new_p1; new_p2] in
@@ -455,9 +454,9 @@ let round_over st =
     let new_p1 = {p1 with money=p1.money + (st.pot/2); latest_command=None; remaining_in_round=true} in
     let new_p2  = {p2 with money=p2.money + (st.pot/2);  latest_command=None; remaining_in_round=true} in
     if (new_p1.money<10 || new_p1.money<0) then
-      GameOver new_p2.id
+      raise (GameOver new_p2.id)
     else if (new_p2.money<20 || new_p2.money< 0) then
-      GameOver new_p1.id
+      raise (GameOver new_p1.id)
 
     else
       let new_player_list = [new_p1; new_p2] in
@@ -503,8 +502,8 @@ let is_valid_command st c=
 
 let do' st c=
   if (is_valid_command st c) then
-    (let st' = (if st.bet_round=1 then fst_bet_round st
-                else if (st.bet_round=2 || st.bet_round=3 || st.bet_round=4) then other_bet_rounds st
+    (let st' = (if st.bet_round=1 then make_flop_cards st
+                else if (st.bet_round=2 || st.bet_round=3 || st.bet_round=4) then make_turn_or_river_card st
                 else round_over st) in
      let new_st = match c with
        | Call -> do_call st'
@@ -513,7 +512,7 @@ let do' st c=
        | Check -> do_check st'
        | Raise(x) -> do_raise st' x
        | Quit -> {st with message="Quit"}  in
-     if (cmd_ends_betting_round st c) then {new_st with bet_round = bet_round +1; first_action = true; latest_st_command =None} (*curr player also maybe??*)
+     if (cmd_ends_betting_round st c) then {new_st with bet_round = st.bet_round +1; first_action = true; latest_st_command =None} (*curr player also maybe??*)
      else new_st)
   else
     raise (InvalidCommand c)
