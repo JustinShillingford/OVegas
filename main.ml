@@ -131,7 +131,7 @@ let playgame () =
   let player2 = init_player "AI" (snd player1) in
   let init_st = initial_state [fst player1; fst player2] (snd player2) in
   build_table init_st;
-  ANSITerminal.(print_string [green] "\n\t\t      GAME START\n\n");
+  ANSITerminal.(print_string [green] "\n\t\t\t      GAME START\n\n");
   repl init_st
 
 let () = playgame ()
