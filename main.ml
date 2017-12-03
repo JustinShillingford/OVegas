@@ -5,6 +5,14 @@ open Command
 open Ai
 open Ui
 
+let valid_command_helper st =
+  let rec valid_command_helper_ii st cmd_list acc =
+    match cmd_list with
+    | [] -> acc
+    | h::t -> if is_valid_command st h then valid_command_helper_ii st t ((cmd_to_string h) ^ " " ^ acc)
+              else valid_command_helper_ii st t acc
+  in valid_command_helper_ii st [Quit; Fold; Check; Call; Raise(0); Bet(0)] ""
+
 let rec repl st =
   let st = if (st.bet_round = 0) then (blinds st) else st in
   build_table st;
@@ -12,8 +20,8 @@ let rec repl st =
 
   if (is_human st) then begin
     print_endline ("Enter an action.");
-    print_endline ("The valid commands are: ");
-    
+    print_endline ("The valid commands are: " ^ valid_command_helper st);
+
     print_string "> ";
     let user_input = parse (read_line ()) in
     let next_state = try do' st user_input with e ->
@@ -32,42 +40,42 @@ let rec repl st =
           print_endline ("You have just Called.");
           (* print_endline "--------------------------- testingggg ---------------------------------";
           win_message (); *)
-          if (next_state.play_round <> st.play_round) then 
+          if (next_state.play_round <> st.play_round) then
             (ANSITerminal.(print_string [magenta] (next_state.message ^ " has won. Let's play again!\n"));
             repl next_state)
-          else 
+          else
             repl next_state
         end
       | Fold -> begin
           print_endline ("You have just Folded.");
-          if (next_state.play_round <> st.play_round) then 
+          if (next_state.play_round <> st.play_round) then
             (ANSITerminal.(print_string [magenta] (next_state.message ^ " has won. Let's play again!\n"));
             repl next_state)
-          else 
+          else
             repl next_state
         end
       | Bet(i) -> begin
           print_endline ("You have just Bet $" ^ string_of_int i ^ ".");
-          if (next_state.play_round <> st.play_round) then 
+          if (next_state.play_round <> st.play_round) then
             (ANSITerminal.(print_string [magenta] (next_state.message ^ " has won. Let's play again!\n"));
             repl next_state)
-          else 
+          else
             repl next_state
         end
       | Check -> begin
           print_endline ("You have Checked.");
-          if (next_state.play_round <> st.play_round) then 
+          if (next_state.play_round <> st.play_round) then
             (ANSITerminal.(print_string [magenta] (next_state.message ^ " has won. Let's play again!\n"));
             repl next_state)
-          else 
+          else
             repl next_state
         end
       | Raise(i) -> begin
           print_endline ("You have Raised by $" ^ string_of_int i ^ ".");
-          if (next_state.play_round <> st.play_round) then 
+          if (next_state.play_round <> st.play_round) then
             (ANSITerminal.(print_string [magenta] (next_state.message ^ " has won. Let's play again!\n"));
             repl next_state)
-          else 
+          else
             repl next_state
         end
       | Quit -> ()
@@ -79,42 +87,42 @@ let rec repl st =
     match ai_input with
     | Call -> begin
         print_endline ("AI has just Called.");
-        if (next_state.play_round <> st.play_round) then 
+        if (next_state.play_round <> st.play_round) then
           (ANSITerminal.(print_string [magenta] (next_state.message ^ " has won. Let's play again!\n"));
            repl next_state)
-        else 
+        else
           repl next_state
       end
     | Fold -> begin
         print_endline ("AI has just Folded.");
-        if (next_state.play_round <> st.play_round) then 
+        if (next_state.play_round <> st.play_round) then
             (ANSITerminal.(print_string [magenta] (next_state.message ^ " has won. Let's play again!\n"));
             repl next_state)
-          else 
+          else
             repl next_state
       end
     | Bet(i) -> begin
         print_endline ("AI has just Bet $" ^ string_of_int i ^ ".");
-        if (next_state.play_round <> st.play_round) then 
+        if (next_state.play_round <> st.play_round) then
             (ANSITerminal.(print_string [magenta] (next_state.message ^ " has won. Let's play again!\n"));
             repl next_state)
-          else 
+          else
             repl next_state
       end
     | Check -> begin
         print_endline ("AI has Checked.");
-        if (next_state.play_round <> st.play_round) then 
+        if (next_state.play_round <> st.play_round) then
             (ANSITerminal.(print_string [magenta] (next_state.message ^ " has won. Let's play again!\n"));
             repl next_state)
-          else 
+          else
             repl next_state
       end
     | Raise(i) -> begin
         print_endline ("AI has Raised by $" ^ string_of_int i ^ ".");
-        if (next_state.play_round <> st.play_round) then 
+        if (next_state.play_round <> st.play_round) then
             (ANSITerminal.(print_string [magenta] (next_state.message ^ " has won. Let's play again!\n"));
             repl next_state)
-          else 
+          else
             repl next_state
       end
     | Quit -> ()

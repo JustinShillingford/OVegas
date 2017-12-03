@@ -28,3 +28,12 @@ let parse str =
     | "check" -> Check
     | "raise" -> Raise (int_of_string second_half)
     |_-> raise Illegal
+
+let cmd_to_string cmd =
+  match cmd with
+  | Call -> "Call"
+  | Fold -> "Fold"
+  | Bet _ -> "Bet"
+  | Quit -> "Quit"
+  | Check -> "Check"
+  | Raise _ -> "Raise"
