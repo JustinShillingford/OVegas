@@ -26,3 +26,5 @@ val do' : state -> Command.command -> state
 val blinds : state -> state
 
 val next_player : state -> Player.player
+
+val new_play_round : state -> state

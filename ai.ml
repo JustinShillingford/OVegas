@@ -209,7 +209,7 @@ let option_to_list lst =
   | None -> []
   | Some x -> x
 
-(*let rec ai_command st =
+let ai_command st =
    match st.players with
   | [p1;p2] ->
     let ai_cards = p2.two_cards in
@@ -217,12 +217,14 @@ let option_to_list lst =
     let table_cards = option_to_list (snd table) in
     let cards = ai_cards@table_cards in
     let cards_value = get_cards_value cards in
-    if cards_value > 0 then Call else Fold
-  | _ -> Fold *)
+    print_endline ("AI_CARDS_VALUE: "^(string_of_int cards_value));
+    if cards_value > 0 && (is_valid_command st Call) then Raise (10)
+    else if cards_value > 0 then Check
+    else Fold
+  | _ -> Fold
 
-let rec ai_command st =
-  if (is_valid_command st Call) then Call else Check
-
+(* let rec ai_command st =
+  if (is_valid_command st Call) then Call else Check *)
 
 let is_bluff opponent_hand table_cards =
   let cards = opponent_hand@table_cards in
