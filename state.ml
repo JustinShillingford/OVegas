@@ -33,6 +33,6 @@ let do' st c =
   | Bet(i) -> bet_helper st i
   | Check -> check_helper st
   | Raise(i) -> raise_helper st i *)
-  | Call -> st
-  | Quit -> st
+  | Call -> {st with message="testing"}
+  | Quit -> {st with message="Quit"}
   | _ -> failwith "Unimplemented - do'"

@@ -10,49 +10,53 @@ let rec repl st =
     print_endline ("Enter an action.");
     print_string "> ";
     let user_input = parse (read_line ()) in
-    let next_state = try (do' st user_input) with e ->
-    match e with
-    | InvalidBet -> print_endline "That's an invalid bet."; repl st
-    | InvalidCommand (c) -> print_endline "That's an invalid command."; repl st
-    | InvalidRaise -> print_endline "That's an invalid amount."; repl st
-    | GameOver (win_id) -> begin
-        if win_id = "AI" then lose_message () else win_message ()
-      end
-    | _ -> repl st
-    in 
-    match user_input with
-    | Call -> begin
-        print_endline ("You have just Called.");
-        build_table next_state;
-        print_endline next_state.message;
-        repl next_state
-      end
-    | Fold -> begin
-        print_endline ("You have just Folded.");
-        build_table next_state;
-        print_endline next_state.message;
-        repl next_state
-      end
-    | Bet(i) -> begin
-        print_endline ("You have just Bet $" ^ string_of_int i ^ ".");
-        build_table next_state;
-        print_endline next_state.message;
-        repl next_state
-      end
-    | Check -> begin
-        print_endline ("You have Checked.");
-        build_table next_state;
-        print_endline next_state.message;
-        repl next_state
-      end
-    | Raise(i) -> begin
-        print_endline ("You have Raised by $" ^ string_of_int i ^ ".");
-        build_table next_state;
-        print_endline next_state.message;
-        repl next_state
-      end
-    | Quit -> ()
-  end
+    let next_state = try do' st user_input with e ->
+      match e with
+      | InvalidBet -> print_endline "That's an invalid bet."; st
+      | InvalidCommand (c) -> print_endline "That's an invalid command."; st
+      | InvalidRaise -> print_endline "That's an invalid amount."; st
+      | GameOver (win_id) -> begin
+          if (win_id = "AI") then (lose_message (); st) else (win_message (); st)
+        end
+      | _ -> st
+    in
+    if next_state = st then repl st else begin
+      match user_input with
+      | Call -> begin
+          print_endline ("You have just Called.");
+          build_table next_state;
+          print_endline next_state.message;
+          (* print_endline "--------------------------- testingggg ---------------------------------";
+          win_message (); *)
+          repl next_state
+        end
+      | Fold -> begin
+          print_endline ("You have just Folded.");
+          build_table next_state;
+          print_endline next_state.message;
+          repl next_state
+        end
+      | Bet(i) -> begin
+          print_endline ("You have just Bet $" ^ string_of_int i ^ ".");
+          build_table next_state;
+          print_endline next_state.message;
+          repl next_state
+        end
+      | Check -> begin
+          print_endline ("You have Checked.");
+          build_table next_state;
+          print_endline next_state.message;
+          repl next_state
+        end
+      | Raise(i) -> begin
+          print_endline ("You have Raised by $" ^ string_of_int i ^ ".");
+          build_table next_state;
+          print_endline next_state.message;
+          repl next_state
+        end
+      | Quit -> ()
+    end
+  end 
   else (* AI's turn; will only choose valid commands  *) begin
     let ai_input = ai_command st in
     let next_state = do' st ai_input in

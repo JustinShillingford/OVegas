@@ -182,4 +182,4 @@ let win_message () =
   ")
 
 let lose_message () =
-  failwith "Unimplemented"
+  failwith "Unimplemented - lose_message"
