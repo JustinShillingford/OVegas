@@ -26,9 +26,6 @@ let string_of_state st =
 let is_human st =
   st.curr_player = List.nth st.players 0
 
-let is_valid_command c =
-  failwith "Unimplemented"
-
 (*[make_flop_cards st] returns an updated state once the initial flop occurs*)
 let make_flop_cards st =
   let (new_deck1, new_shared_cards1) = flip_new_card (st.table) in
