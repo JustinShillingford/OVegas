@@ -72,11 +72,11 @@ let rec flip_new_card (deck, cards) =
     match cards with
     | Some old_cards -> begin
       let (new_deck:deck) = t in
-      let (new_mid:card list option) = Some (h::old_cards) in
+      let (new_mid:card list option) = Some (old_cards @ [h]) in
       ((new_deck, new_mid):table)
     end
     | None -> let (new_deck:deck) = t in
-      let (new_mid:card list option) = Some (h::[]) in
+      let (new_mid:card list option) = Some ([] @ [h]) in
       ((new_deck, new_mid):table)
   end
   | [] -> raise EmptyDeck
