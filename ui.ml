@@ -120,6 +120,9 @@ let build_table s =
   let ai = List.nth players 1 in
   let humanCards = human.two_cards in
   let aiCards = ai.two_cards in
+  let phuman_str = human.id in
+  let phuman_pot = string_of_int human.money in  
+  let ai_pot = string_of_int ai.money in
   let middleCards = match snd table with
     | None -> []
     | Some cards -> cards
@@ -127,33 +130,43 @@ let build_table s =
   let middleSize = List.length middleCards in
 
   if (round <= 1 && middleSize == 0) then begin
+    print_endline ("\t\tAI ($" ^ ai_pot ^")");
     print_facedown ();
     print_no_cards pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1)
+    print_two_cards (List.hd humanCards) (List.nth humanCards 1);
+    print_endline ("\t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")")
   end
   else if (round == 2 && middleSize == 3) then begin
+    print_endline ("\t\tAI ($" ^ ai_pot ^")");
     print_facedown ();
     print_three_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2);
     print_pot pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1)
+    print_two_cards (List.hd humanCards) (List.nth humanCards 1);
+    print_endline ("\t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")");
   end
   else if (round == 3 && middleSize == 4) then begin
+    print_endline ("\t\tAI ($" ^ ai_pot ^")");
     print_facedown ();
     print_four_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3);
     print_pot pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1)
+    print_two_cards (List.hd humanCards) (List.nth humanCards 1);
+    print_endline ("\t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")");
   end
   else if (round == 4 && middleSize == 5) then begin
+    print_endline ("\t\tAI ($" ^ ai_pot ^")");
     print_facedown ();
     print_five_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3) (List.nth middleCards 4);
     print_pot pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1)
+    print_two_cards (List.hd humanCards) (List.nth humanCards 1);
+    print_endline ("\t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")");
   end
   else if (round == 5 && middleSize == 5) then begin
+    print_endline ("\t\tAI ($" ^ ai_pot ^")");
     print_two_cards (List.hd aiCards) (List.nth aiCards 1);
     print_five_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3) (List.nth middleCards 4);
     print_pot pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1)
+    print_two_cards (List.hd humanCards) (List.nth humanCards 1);
+    print_endline ("\t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")");
   end
   else raise Mismatch
 
