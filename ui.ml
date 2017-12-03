@@ -103,7 +103,7 @@ let print_five_cards (r1,s1) (r2,s2) (r3,s3) (r4,s4) (r5,s5) =
   print_string (l1 ^ l2 ^ l3 ^ l4 ^ l5 ^ l6 ^ l7)
 
 let print_pot p =
-  print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t\t│\n")
+  print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t\t\t│\n")
 
 let print_no_cards p =
   let e = "│\t\t\t\t\t\t\t\t\t│\n" in

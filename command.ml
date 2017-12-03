@@ -27,4 +27,4 @@ let parse str =
     | "quit" -> Quit
     | "check" -> Check
     | "raise" -> Raise (int_of_string second_half)
-    |_-> raise Illegal
+    | _ -> raise Illegal
