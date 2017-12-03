@@ -6,6 +6,10 @@ open Ai
 open Ui
 
 let rec repl st =
+  let st = if (st.bet_round = 0) then (blinds st) else st in
+  build_table st;
+  print_endline st.message;
+
   if (is_human st) then begin
     print_endline ("Enter an action.");
     print_string "> ";
@@ -24,34 +28,24 @@ let rec repl st =
       match user_input with
       | Call -> begin
           print_endline ("You have just Called.");
-          build_table next_state;
-          print_endline next_state.message;
           (* print_endline "--------------------------- testingggg ---------------------------------";
           win_message (); *)
           repl next_state
         end
       | Fold -> begin
           print_endline ("You have just Folded.");
-          build_table next_state;
-          print_endline next_state.message;
           repl next_state
         end
       | Bet(i) -> begin
           print_endline ("You have just Bet $" ^ string_of_int i ^ ".");
-          build_table next_state;
-          print_endline next_state.message;
           repl next_state
         end
       | Check -> begin
           print_endline ("You have Checked.");
-          build_table next_state;
-          print_endline next_state.message;
           repl next_state
         end
       | Raise(i) -> begin
           print_endline ("You have Raised by $" ^ string_of_int i ^ ".");
-          build_table next_state;
-          print_endline next_state.message;
           repl next_state
         end
       | Quit -> ()
@@ -62,33 +56,23 @@ let rec repl st =
     let next_state = do' st ai_input in
     match ai_input with
     | Call -> begin
-        print_endline ("AI has just Called.");
-        build_table next_state;
-        print_endline next_state.message;
+        print_endline ("AI has just Called.");        
         repl next_state
       end
     | Fold -> begin
-        print_endline ("AI has just Folded.");
-        build_table next_state;
-        print_endline next_state.message;
+        print_endline ("AI has just Folded.");        
         repl next_state
       end
     | Bet(i) -> begin
-        print_endline ("AI has just Bet $" ^ string_of_int i ^ ".");
-        build_table next_state;
-        print_endline next_state.message;
+        print_endline ("AI has just Bet $" ^ string_of_int i ^ ".");        
         repl next_state
       end
     | Check -> begin
         print_endline ("AI has Checked.");
-        build_table next_state;
-        print_endline next_state.message;
         repl next_state
       end
     | Raise(i) -> begin
         print_endline ("AI has Raised by $" ^ string_of_int i ^ ".");
-        build_table next_state;
-        print_endline next_state.message;
         repl next_state
       end
     | Quit -> ()
