@@ -180,3 +180,6 @@ let win_message () =
       | $$ |  $$$$$$/|  $$$$$$/      |  $$$$$/$$$$/| $$| $$  | $$ /$$
       |__/  \\______/  \\______/        \\_____/\\___/ |__/|__/  |__/|__/
   ")
+
+let lose_message () =
+  failwith "Unimplemented - lose_message"
