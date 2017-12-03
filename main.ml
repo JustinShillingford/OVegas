@@ -12,6 +12,8 @@ let rec repl st =
 
   if (is_human st) then begin
     print_endline ("Enter an action.");
+    print_endline ("The valid commands are: ");
+    
     print_string "> ";
     let user_input = parse (read_line ()) in
     let next_state = try do' st user_input with e ->
