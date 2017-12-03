@@ -21,13 +21,13 @@ let rec repl st =
     | Fold -> begin
         print_endline ("You have just Folded.");
         build_table next_state;
-        print_endline next_state.message;        
+        print_endline next_state.message;
         repl next_state
       end
     | Bet(i) -> begin
         print_endline ("You have just Bet $" ^ string_of_int i ^ ".");
         build_table next_state;
-        print_endline next_state.message;        
+        print_endline next_state.message;
         repl next_state
       end
     | Check -> begin

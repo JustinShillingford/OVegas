@@ -156,3 +156,6 @@ let build_table s =
     print_two_cards (List.hd humanCards) (List.nth humanCards 1)
   end
   else raise Mismatch
+
+let win_message () =
+  

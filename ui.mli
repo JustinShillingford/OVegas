@@ -26,3 +26,6 @@ val print_no_cards : int -> unit
 
 (* [build_table plyrs pot tbl] is the ASCII representation of the table *)
 val build_table : State.state -> unit
+
+(* [win_message] is the ASCII win message for the player *)
+val win_message : unit -> unit
