@@ -1,3 +1,9 @@
+exception InvalidBet
+exception InvalidRaise
+exception Tie
+exception GameOver of string
+exception InvalidCommand of Command.command
+
 (* [state] is a combination of players, a table, a counter keeping track of
  * turns and rounds of the game. *)
  type state = {players: Player.player list; play_round: int; bet_round: int; pot:int; table: Table.table; latest_bet:int; curr_player: Player.player; message: string}
