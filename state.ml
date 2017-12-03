@@ -26,13 +26,13 @@ let make_flop_cards st =
   let (new_deck1, new_shared_cards1) = flip_new_card (st.table) in
   let (new_deck2, new_shared_cards2) = flip_new_card (new_deck1, new_shared_cards1) in
   let new_table = flip_new_card (new_deck2, new_shared_cards2) in
-  {st with table = new_table; bet_round =st.bet_round+1}
+  {st with table = new_table}
 
 (*[make_turn_or_river_card st] returns an updated state once the 4th or 5th card of the
   shared cards is flipped onto the table*)
 let make_turn_or_river_card st =
   let new_table = flip_new_card st.table  in
-  {st with table = new_table; bet_round =st.bet_round+1; latest_bet=0}
+  {st with table = new_table; latest_bet=0}
 
 (* [card_list_wo_options c_option_list] is a helper function that returns the card list
    without the options*)
@@ -62,8 +62,7 @@ let string_of_state st =
 (* This function assumes there's only two players  *)
 let next_player st =
   match st.players with
-  | x::y::[] -> begin
-      let p1 = x in let p2 = y in
+  | p1::p2::[] -> begin
       if (st.curr_player = p1) then p2 else p1
     end
   | _ -> failwith "johanna messed up and/or there was more than two players???"
@@ -340,24 +339,19 @@ let game_best_player_hand p1 p2 st=
   |_ -> raise Tie
 
 
-
-
-
-
-
-
 (*[do_call st p] is the state once player [p] calls in state [st]*)
 let do_call st  =
   let p_changed = {st.curr_player with latest_command = Some "call"; money_in_pot=st.latest_bet; money=(st.curr_player).money-(st.latest_bet-(st.curr_player).money_in_pot)} in
   let new_players = List.map (fun x -> if x=st.curr_player then p_changed else x) st.players in
-  {st with players=new_players;  curr_player=next_player st; first_action=false; latest_st_command= Some "call"}
+  {st with pot=st.latest_bet *2; players=new_players;  curr_player=next_player st; first_action=false; latest_st_command= Some "call"}
 
 
 (*[do_fold st p] is the state once player [p] folds in state [st]*)
 let do_fold st =
-  let p_changed = {st.curr_player with latest_command = Some "fold"; remaining_in_round=false} in
-  let new_players = List.map (fun x -> if x=st.curr_player then p_changed else x) st.players in
-  {st with players=new_players; curr_player=next_player st; first_action=false; latest_st_command= Some "fold"}
+  let other_player = next_player st in
+  let other_player_changed = {other_player with money=other_player.money+st.pot} in
+  let new_players = List.map (fun x -> if x=other_player_changed then other_player_changed else x) st.players in
+  initial_state new_players (shuffle (new_deck()))
 
 
 (*[do_check st p] is the state once player [p] checks in state [st]*)
@@ -394,16 +388,12 @@ let possible_raise st m =
   else false
 
 let do_raise st m =
-  if (m<maximum_bet st && possible_raise st  m) then
+  if (m<maximum_bet st && possible_raise st m) then
     let p_changed_cmnd = {st.curr_player with latest_command = Some "bet"; money=(st.curr_player).money- m + (st.curr_player).money_in_pot; money_in_pot=m } in
     let new_players = List.map (fun x -> if x=st.curr_player then p_changed_cmnd else x) st.players in
     {st with players=new_players;  pot=st.pot +m; latest_bet=m+st.latest_bet;  curr_player=next_player st; first_action=false; latest_st_command= Some "raise"}
   else
     raise InvalidRaise
-
-
-let ai_command st=
-  Call
 
 
 
@@ -419,7 +409,6 @@ let new_play_round_st st =
   let new_player_list = new_p1::new_p2::[] in
   let new_st = {st with players = new_player_list; table=(t2, None)} in
   new_st
-
 
 
 (*if only one player is remaining then you do round over *)
@@ -482,14 +471,15 @@ let is_valid_command st c=
     |Call -> true
     |Raise(x) -> true
     |Fold -> true
-    |Check -> if st.first_action then true else
-        (if (st.latest_st_command = Some "check")  then true else false)
+    |Check -> false
+    |Quit -> true
     |_ -> false )
   else if st.first_action then (
     match c with
     |Check -> true
     |Bet(x) -> true
     |Fold -> true
+    |Quit -> true
     |_-> false )
   else
     match c with
@@ -497,6 +487,7 @@ let is_valid_command st c=
     |Raise(x) -> true
     |Fold -> true
     |Check -> if (st.latest_st_command = Some "raise" || st.latest_st_command = Some "call" || st.latest_st_command = Some "bet" )  then false else true
+    |Quit -> true
     |_-> false
 
 

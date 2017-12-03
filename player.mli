@@ -10,5 +10,6 @@ type player= {id: string; two_cards: hand; money: int; latest_command: string op
     dealing that player's hand. *)
 val init_player : string -> Table.deck -> player * Table.deck
 
+
 (* [string_of_hand h] is the string representation of the hand [h]. *)
 val string_of_hand : hand -> string

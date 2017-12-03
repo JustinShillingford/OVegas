@@ -17,7 +17,6 @@ val initial_state : Player.player list -> Table.deck -> state
 (* [string_of_state st] is the string representation of the state [st]. *)
 val string_of_state : state -> string
 
-
 val is_valid_command : state -> Command.command -> bool
 
 (* [do st cmd] is the new state of the game after the current player used the
@@ -26,3 +25,5 @@ val do' : state -> Command.command -> state
 
 (*[game_best_player_hand p1 p2 st] is player with the best hand at the state [st]*)
 val game_best_player_hand :  Player.player -> Player.player -> state -> Player.player
+
+val blinds: state -> state

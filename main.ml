@@ -6,6 +6,7 @@ open Ai
 open Ui
 
 let rec repl st =
+  let st = if (st.bet_round =0) then (blinds st) else st in
   if (st.curr_player.is_human) then begin
     print_endline ("Enter an action.");
     print_string "> ";

@@ -1,6 +1,6 @@
 type command = Call | Fold | Bet of int | Check | Raise of int | Quit
 
-exception Illegal
+exception InvalidCommand
 
 let parse str =
   let trimmed_str = String.trim str in
@@ -26,5 +26,5 @@ let parse str =
     | "bet" -> Bet (int_of_string second_half)
     | "quit" -> Quit
     | "check" -> Check
-    |"raise" -> Raise (int_of_string second_half)
-    |_-> raise Illegal
+    | "raise" -> Raise (int_of_string second_half)
+    |_-> raise InvalidCommand
