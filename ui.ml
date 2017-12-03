@@ -134,7 +134,7 @@ let build_table s =
     print_facedown ();
     print_no_cards pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    print_endline ("\t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")");
+    print_endline ("\t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")")
   end
   else if (round == 2 && middleSize == 3) then begin
     print_endline ("\t\tAI ($" ^ ai_pot ^")");
