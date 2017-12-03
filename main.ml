@@ -5,6 +5,14 @@ open Command
 open Ai
 open Ui
 
+let valid_command_helper st =
+  let rec valid_command_helper_ii st cmd_list acc =
+    match cmd_list with
+    | [] -> acc
+    | h::t -> if is_valid_command st h then valid_command_helper_ii st t ((cmd_to_string h) ^ " " ^ acc)
+              else valid_command_helper_ii st t acc
+  in valid_command_helper_ii st [Quit; Fold; Check; Call; Raise(0); Bet(0)] ""
+
 let rec repl st =
   if (st.message)="quit" then () else
   if (st.bet_round=5)
@@ -19,14 +27,16 @@ let rec repl st =
   print_endline (((next_player st).id)^(string_of_int (next_player st).money));
   if (st.curr_player.is_human) then begin
     print_endline ("Enter an action.");
+    print_endline ("The valid commands are: " ^ valid_command_helper st);
+
     print_string "> ";
     let user_input = parse (read_line ()) in
 
     let next_state = try do' st user_input with e ->
       match e with
       | InvalidBet -> print_endline "That's an invalid bet."; st
-      | InvalidCommand (c) -> print_endline "That's an invalid command."; st
-      | InvalidRaise -> print_endline "That's an invalid amount."; st
+      | InvalidCommand (c) -> ANSITerminal.(print_string [red] "That's an invalid command.\n\n"); st
+      | InvalidRaise -> ANSITerminal.(print_string [red] "That's an invalid amount."); st
       | GameOver (win_id) -> begin
           if (win_id = "AI") then (lose_message (); {st with message="quit"})
         else (win_message (); {st with message="quit"})
@@ -105,6 +115,15 @@ let playgame () =
   let player2 = init_player "AI" (snd player1) in
   let init_st = initial_state [fst player1; fst player2] (snd player2) in
   build_table init_st;
+  ANSITerminal.(print_string [green] "\n\t\t\t      GAME START\n");
+  ANSITerminal.(print_string [cyan] "
+    Texas Hold'em Poker is the world's most popular poker game, both in casinos and online. Here are the key things you need to know:
+    - Every player is dealt two cards, for their eyes only
+    - The dealer spreads five cards - three at once, then another, then another - which can be used by all players to make their best possible five-card hand
+    - Before and after each card(s) is revealed, players take turns to bet. To stay in the hand and see the next card, all players must have put the same amount of chips in the pot as each other
+    - The best poker hand wins the pot
+    It's a seemingly simple game, but there's tons of strategies to win. Good luck!
+  ");
   repl init_st
 
 let () = playgame ()
