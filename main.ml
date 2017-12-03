@@ -56,7 +56,7 @@ let rec repl st =
         end
       | Quit -> ()
     end
-  end 
+  end
   else (* AI's turn; will only choose valid commands  *) begin
     let ai_input = ai_command st in
     let next_state = do' st ai_input in

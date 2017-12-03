@@ -30,4 +30,5 @@ val build_table : State.state -> unit
 (* [win_message] is the ASCII win message for the player *)
 val win_message : unit -> unit
 
+(* [lose_message] is the ASCII lose message for the player *)
 val lose_message : unit -> unit
