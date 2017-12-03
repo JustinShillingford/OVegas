@@ -5,14 +5,17 @@ open Command
 
 exception Illegal
 exception InvalidBet
+exception InvalidRaise
 exception Invalid
 exception Tie
-exception GameOver
+exception GameOver of string
+exception InvalidCommand of command
 
-type state = {players: player list; play_round: int; bet_round: int; pot:int; table: table; latest_bet:int; curr_player: player; message: string}
+type state = {players: player list; play_round: int; bet_round: int; pot:int; table: table; latest_bet:int; curr_player: player; message: string; first_action: bool; latest_st_command: string option}
+
 
 let initial_state player_list deck =
-  {players = player_list; play_round = 0; bet_round = 0; pot = 0; table=(deck, None); latest_bet=0; curr_player=(List.nth player_list 0); message= ""}
+  {players = player_list; play_round = 0; bet_round = 0; pot = 0; table=(deck, None); latest_bet=0; curr_player=(List.nth player_list 0); message= "";first_action=true; latest_st_command=None}
 
 (*[make_flop_cards st] returns an updated state once the initial flop occurs*)
 let make_flop_cards st =
@@ -52,8 +55,6 @@ let card_list_wo_options c_option_list =
   |_-> raise Illegal in
   state_string ^ state_string2
 
-
-
   (* This function assumes there's only two players  *)
   let next_player st =
     match st.players with
@@ -63,66 +64,6 @@ let card_list_wo_options c_option_list =
     end
     | _ -> failwith "johanna messed up and/or there was more than two players???"
 
-(*[do_call st p] is the state once player [p] calls in state [st]*)
-let do_call st p  =
-  let p_changed_cmnd = {p with latest_command = Some "call"} in
-  let new_players = List.map (fun x -> if x=p then p_changed_cmnd else x) st.players in
-  {st with players=new_players;  curr_player=next_player st}
-
-
-(*[do_fold st p] is the state once player [p] folds in state [st]*)
-let do_fold st p =
-  let p_changed_cmnd = {p with latest_command = Some "fold"; remaining_in_round=false} in
-  let new_players = List.map (fun x -> if x=p then p_changed_cmnd else x) st.players in
-  {st with players=new_players; curr_player=next_player st}
-
-
-(*[do_check st p] is the state once player [p] checks in state [st]*)
-let do_check st p =
-  let p_changed_cmnd = {p with latest_command = Some "check"} in
-  let new_players = List.map (fun x -> if x=p then p_changed_cmnd else x) st.players in
-  {st with players=new_players;  curr_player=next_player st}
-
-(*[possible_bet p x] is a boolean representing if the player [p] is betting at
-  least 0 and at most however much money they have. *)
-let possible_bet p x =
-  if x<0 then false
-  else if x<=p.money then true else false
-
-(*[maximum_bet st] is the maximum amount either player can bet in state [st]. *)
-let maximum_bet st =
-  let player1=List.nth st.players 0 in
-  let player2=List.nth st.players 1 in
-  if player1.money>player2.money then player2.money else player1.money
-
-
-(*[do_bet st p m] is the state once player [p] bets amount [m] in state [st]*)
-let do_bet st p m =
-  if (m<maximum_bet st && possible_bet p m) then
-    let p_changed_cmnd = {p with latest_command = Some "bet"; money=p.money-m } in
-    let new_players = List.map (fun x -> if x=p then p_changed_cmnd else x) st.players in
-    {st with players=new_players;  pot=st.pot +m; latest_bet=m; curr_player=next_player st}
-  else
-    raise InvalidBet
-
-(*TO COMPLETE*)
-let do_raise st p m =
-  if (m<maximum_bet st && possible_bet p m) then
-    let p_changed_cmnd = {p with latest_command = Some "bet"; money=p.money-m } in
-    let new_players = List.map (fun x -> if x=p then p_changed_cmnd else x) st.players in
-    {st with players=new_players;  pot=st.pot +m; latest_bet=m;  curr_player=next_player st}
-  else
-    raise InvalidBet
-
-
-let do' st p c=
-  match c with
-  | Call -> do_call st p
-  | Fold ->  do_fold st p
-  | Bet(x)->  do_bet st p x
-  | Check -> do_check st p
-  | Raise(x) -> do_raise st p x
-  | Quit -> st
 
 
 (*[compare_cards c1 c2] compares the ranks of 2 cards and returns 1 if c1's rank
@@ -398,23 +339,110 @@ let game_best_player_hand p1 p2 st=
 
 
 
-  let ai_command st=
-    Call
-
-(*define p1 as the human player*)
-let is_human st p=
-  p = List.nth st.players 0
 
 
-(* This function assumes there's only two players  *)
-let next_player st =
-  match st.players with
-  | x::y::[] -> begin
-      let p1 = x in let p2 = y in
-      if (st.curr_player = p1) then p2 else p1
-    end
-  | _ -> failwith "johanna messed up and/or there was more than two players???"
 
+(*[do_call st p] is the state once player [p] calls in state [st]*)
+let do_call st  =
+  let p_changed = {st.curr_player with latest_command = Some "call"; money_in_pot=st.latest_bet; money=(st.curr_player).money-(st.latest_bet-(st.curr_player).money_in_pot)} in
+  let new_players = List.map (fun x -> if x=st.curr_player then p_changed else x) st.players in
+  {st with players=new_players;  curr_player=next_player st; first_action=false; latest_st_command= Some "call"}
+
+
+(*[do_fold st p] is the state once player [p] folds in state [st]*)
+let do_fold st =
+  let p_changed = {st.curr_player with latest_command = Some "fold"; remaining_in_round=false} in
+  let new_players = List.map (fun x -> if x=st.curr_player then p_changed else x) st.players in
+  {st with players=new_players; curr_player=next_player st; first_action=false; latest_st_command= Some "fold"}
+
+
+(*[do_check st p] is the state once player [p] checks in state [st]*)
+let do_check st =
+  let p_changed = {st.curr_player with latest_command = Some "check"} in
+  let new_players = List.map (fun x -> if x=st.curr_player then p_changed else x) st.players in
+  {st with players=new_players;  curr_player=next_player st; first_action=false; latest_st_command= Some "check"}
+
+(*[possible_bet p x] is a boolean representing if the player [p] is betting at
+  least 0 and at most however much money they have. *)
+let possible_bet p x =
+  if x<0 then false
+  else if x<=p.money then true else false
+
+(*[maximum_bet st] is the maximum amount either player can bet in state [st]. *)
+let maximum_bet st =
+  let player1=List.nth st.players 0 in
+  let player2=List.nth st.players 1 in
+  if player1.money>player2.money then player2.money else player1.money
+
+
+(*[do_bet st p m] is the state once player [p] bets amount [m] in state [st]*)
+let do_bet st m =
+  if (m<maximum_bet st && possible_bet st.curr_player m) then
+    let p_changed_cmnd = {st.curr_player with latest_command = Some "bet"; money=(st.curr_player).money-m; money_in_pot=m} in
+    let new_players = List.map (fun x -> if x=st.curr_player then p_changed_cmnd else x) st.players in
+    {st with players=new_players;  pot=st.pot +m; latest_bet=m; curr_player=next_player st; first_action=false; latest_st_command= Some "bet"}
+  else
+    raise InvalidBet
+
+
+let possible_raise st m =
+  if (m>st.latest_bet && possible_bet st.curr_player m) then true
+  else false
+
+let do_raise st m =
+  if (m<maximum_bet st && possible_raise st  m) then
+    let p_changed_cmnd = {st.curr_player with latest_command = Some "bet"; money=(st.curr_player).money- m + (st.curr_player).money_in_pot; money_in_pot=m } in
+    let new_players = List.map (fun x -> if x=st.curr_player then p_changed_cmnd else x) st.players in
+    {st with players=new_players;  pot=st.pot +m; latest_bet=m+st.latest_bet;  curr_player=next_player st; first_action=false; latest_st_command= Some "raise"}
+  else
+    raise InvalidRaise
+
+
+
+let cmd_ends_betting_round st c =
+  match c with
+  | Fold -> true
+  | Call -> not st.first_action
+  | Check -> not st.first_action
+  |_ -> false
+
+
+(*valid commands*)
+let is_valid_command st c=
+  if st.bet_round =1 then (
+    match c with
+    |Call -> true
+    |Raise(x) -> true
+    |Fold -> true
+    |Check -> if st.first_action then true else
+        (if (st.latest_st_command = Some "check")  then true else false)
+    |_ -> false )
+  else if st.first_action then (
+    match c with
+    |Check -> true
+    |Bet(x) -> true
+    |Fold -> true
+    |_-> false )
+  else
+    match c with
+    |Call -> true
+    |Raise(x) -> true
+    |Fold -> true
+    |Check -> if (st.latest_st_command = Some "raise" || st.latest_st_command = Some "call" || st.latest_st_command = Some "bet" )  then false else true
+    |_-> false
+
+
+let do' st c=
+  if (is_valid_command st c) then
+  match c with
+  | Call -> do_call st
+  | Fold ->  do_fold st
+  | Bet(x)->  do_bet st x
+  | Check -> do_check st
+  | Raise(x) -> do_raise st x
+  | Quit -> st
+  else
+    raise (InvalidCommand c)
 
 (*[blinds st] returns the new state after p1 and p2 have put in their small and big blinds*)
 let blinds st=
@@ -426,40 +454,52 @@ let blinds st=
      let new_p2 = {p2 with money=m2} in
      let new_players_list = new_p1::new_p2::[] in
      (*facts about new state*)
-     let new_st = {st with players= new_players_list; pot=st.pot + 10 + 20; bet_round=st.bet_round + 1; latest_bet=20} in
+     let new_st = {st with players= new_players_list; pot=st.pot + 10 + 20; bet_round=st.bet_round + 1; latest_bet=20; first_action=true} in
      new_st)
   |_-> st
 
 
-(*valid commands*)
+
+            (*
+  then (c=Call || c=(Raise x) || c=Fold)
+  else if st.first_action=true
+  then (c=Check || c=Bet(x)|| c=Fold)
+  else
+    (c=Check || c=Call || c=Fold || c=Raise) *)
 
 (*preflop*)
 let betting_fst_round st  =
 
+  (*preflop; bet round =1*)
   let p1 = List.nth st.players 0 in
   let p2 = List.nth st.players 1 in
-  print_endline("This is the first betting round. You have the option of calling, raising, or folding.");
-
-  let p_command= if (st.curr_player = p1) then parse (read_line())
-  else ai_command (*ai_comand would need to return either call, fold, or raise.*) in
+  (*let p_command= if (st.curr_player = p1) then parse (read_line())
+    else ai_command (*ai_comand would need to return either call, fold, or raise.*) in *)
 
   if (p_command = Call || p_command = Fold || p_command = Raise x) then
   (let new_st = if p_command = Call
-    then do' st st.curr_player Call
+    then do' st Call
     else if p_command = Fold then
-      do' st st.curr_player Fold
+      do' st Fold
     else
-      do' st st.curr_player (Raise x)) in
+      do' st (Raise x)) in
   (*not sure about this line*) new_st
   else
   (*    print_endline("The command you entered was invalid for this round. Please enter a new command") *)
   st
 
+let other_bet_rounds st =
+  (*flop; bet round =2*)
+  (*turn; bet round =3*)
+  (*river; bet round =4*)
 
 
 
 
 
+
+
+  (*makes a new round after a showdown*)
 let new_play_round_st st =
   let new_deck = shuffle(new_deck()) in
   let new_st = {st with table=(new_deck, None)} in
@@ -477,22 +517,14 @@ let new_play_round_st st =
 
 
 
+
+
+
 (*if only one player is remaining then you do round over *)
 (*game over could be raised from the loop and in that case you want to quit game!*)
-
-
 let round_over st =
   let p1 = List.nth st.players 0 in
   let p2 = List.nth st.players 1 in
-  let shared_cards = List.map string_of_card (card_list_wo_options (snd st.table)) in
-  let string_sh_cards =
-    match shared_cards with
-    |[]-> "pre-flop"
-    |c1::c2::c3::c4::c5::[]-> c1 ^ ", " ^ c2 ^ ", " ^ c3 ^ ", " ^ c4 ^ ", " ^ c5
-    |c1::c2::c3::c4::[] ->c1 ^ ", " ^ c2 ^ ", " ^ c3 ^ ", " ^ c4
-    |c1::c2::c3::[] ->c1 ^ ", " ^ c2 ^ ", " ^ c3
-    |_-> raise Invalid
-  in
   try
     begin
       let winning_player = if (p1.remaining_in_round=false) then p2
@@ -502,39 +534,35 @@ let round_over st =
       let new_p1 = {p1 with money=p1.money + p1_won_money; latest_command=None; remaining_in_round=true} in
       let p2_won_money = if p2=winning_player then st.pot else 0 in
       let new_p2 = {p2 with money=p2.money + p2_won_money; latest_command=None; remaining_in_round=true} in
-      let round_winners_hand = winning_player.two_cards in
-      let hand_cards = string_of_hand round_winners_hand in
-      let string_to_print="The shared cards were " ^ string_sh_cards ^ " and the winner " ^ winning_player.id ^
-                          " had the cards " ^ hand_cards in
+
       if (new_p1.money<10 || new_p1.money<0) then
-        (print_endline("game over. " ^ new_p1.id ^" lost. " ^ new_p2.id ^ "wins!" );
-         raise GameOver)
-      else if (new_p2.money<20 || new_p2.money< 0) then (
-        print_endline("game over. " ^ new_p2.id ^" lost. " ^ new_p1.id ^ "wins!" );
-        raise GameOver)
+      GameOver new_p2.id
+      else if (new_p2.money<20 || new_p2.money< 0) then
+      GameOver new_p1.id
 
       else
         let new_player_list = [new_p1; new_p2] in
         let new_curr_player = List.nth st.players 0 in
         let new_st = {st with players = new_player_list; bet_round=0; play_round=st.play_round+1; pot=0; latest_bet=0; curr_player=new_curr_player} in
         let new_st_with_table = new_play_round_st(new_st) in
-        repl new_st_with_table string_to_print
+        new_st
     end
   with
   |Tie ->
     let new_p1 = {p1 with money=p1.money + (st.pot/2); latest_command=None; remaining_in_round=true} in
     let new_p2  = {p2 with money=p2.money + (st.pot/2);  latest_command=None; remaining_in_round=true} in
-    let string_to_print= "The shared cards were " ^ string_sh_cards ^ ". And, there was a tie between you and the AI. Thus, you two will split the pot." in
     if (new_p1.money<10 || new_p1.money<0) then
-      (print_endline("game over. " ^ new_p1.id ^" lost. " ^ new_p2.id ^ "wins!" );
-       raise GameOver)
-    else if (new_p2.money<20 || new_p2.money< 0) then (
-      print_endline("game over. " ^ new_p2.id ^" lost. " ^ new_p1.id ^ "wins!" );
-      raise GameOver)
+      GameOver new_p2.id
+    else if (new_p2.money<20 || new_p2.money< 0) then
+      GameOver new_p1.id
 
     else
       let new_player_list = [new_p1; new_p2] in
       let new_curr_player = List.nth st.players 0 in
       let new_st = {st with players = new_player_list; bet_round=0; play_round=st.play_round+1; pot=0; latest_bet=0; curr_player=new_curr_player} in
       let new_st_with_table = new_play_round_st(new_st) in
-      repl new_st_with_table new_curr_player string_to_print
+      new_st
+
+
+      let ai_command st=
+        Call
