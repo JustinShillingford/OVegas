@@ -6,52 +6,53 @@ open Ai
 open Ui
 
 let rec repl st =
-  if (is_human st) then begin
+  if (st.message)="quit" then () else
+  if (st.bet_round=5)
+    then ((build_table st); (print_endline st.message); let reset_st =
+    new_play_round ({st with bet_round=0;play_round=0;pot=0; latest_bet=0})
+    in (repl reset_st)) else
+  let st = if (st.bet_round=0) then (blinds st) else st in
+  build_table st;
+  print_endline st.message;
+
+  print_endline ((st.curr_player.id)^(string_of_int st.curr_player.money));
+  print_endline (((next_player st).id)^(string_of_int (next_player st).money));
+  if (st.curr_player.is_human) then begin
     print_endline ("Enter an action.");
     print_string "> ";
     let user_input = parse (read_line ()) in
+
     let next_state = try do' st user_input with e ->
       match e with
       | InvalidBet -> print_endline "That's an invalid bet."; st
       | InvalidCommand (c) -> print_endline "That's an invalid command."; st
       | InvalidRaise -> print_endline "That's an invalid amount."; st
       | GameOver (win_id) -> begin
-          if (win_id = "AI") then (lose_message (); st) else (win_message (); st)
+          if (win_id = "AI") then (lose_message (); {st with message="quit"})
+        else (win_message (); {st with message="quit"})
         end
       | _ -> st
     in
-    if next_state = st then repl st else begin
+    if next_state = st then (repl st) else begin
       match user_input with
       | Call -> begin
           print_endline ("You have just Called.");
-          build_table next_state;
-          print_endline next_state.message;
-          (* print_endline "--------------------------- testingggg ---------------------------------";
-          win_message (); *)
           repl next_state
         end
       | Fold -> begin
           print_endline ("You have just Folded.");
-          build_table next_state;
-          print_endline next_state.message;
           repl next_state
         end
       | Bet(i) -> begin
           print_endline ("You have just Bet $" ^ string_of_int i ^ ".");
-          build_table next_state;
-          print_endline next_state.message;
           repl next_state
         end
       | Check -> begin
           print_endline ("You have Checked.");
-          build_table next_state;
-          print_endline next_state.message;
           repl next_state
         end
       | Raise(i) -> begin
           print_endline ("You have Raised by $" ^ string_of_int i ^ ".");
-          build_table next_state;
-          print_endline next_state.message;
           repl next_state
         end
       | Quit -> ()
@@ -59,39 +60,38 @@ let rec repl st =
   end
   else (* AI's turn; will only choose valid commands  *) begin
     let ai_input = ai_command st in
-    let next_state = do' st ai_input in
+    let next_state = try do' st ai_input with e ->
+      match e with
+      | GameOver (win_id) ->
+        begin
+        if (win_id = "AI") then (lose_message (); {st with message="quit"})
+        else (win_message (); {st with message="quit"})
+        end
+      | _ -> st in
+    if next_state = st then (repl st) else begin
     match ai_input with
     | Call -> begin
         print_endline ("AI has just Called.");
-        build_table next_state;
-        print_endline next_state.message;
         repl next_state
       end
     | Fold -> begin
         print_endline ("AI has just Folded.");
-        build_table next_state;
-        print_endline next_state.message;
         repl next_state
       end
     | Bet(i) -> begin
         print_endline ("AI has just Bet $" ^ string_of_int i ^ ".");
-        build_table next_state;
-        print_endline next_state.message;
         repl next_state
       end
     | Check -> begin
         print_endline ("AI has Checked.");
-        build_table next_state;
-        print_endline next_state.message;
         repl next_state
       end
     | Raise(i) -> begin
         print_endline ("AI has Raised by $" ^ string_of_int i ^ ".");
-        build_table next_state;
-        print_endline next_state.message;
         repl next_state
       end
     | Quit -> ()
+    end
   end
 
 let playgame () =
