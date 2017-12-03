@@ -10,7 +10,16 @@ let rec repl st =
     print_endline ("Enter an action.");
     print_string "> ";
     let user_input = parse (read_line ()) in
-    let next_state = do' st user_input in
+    let next_state = try (do' st user_input) with e ->
+    match e with
+    | InvalidBet -> print_endline "That's an invalid bet."; repl st
+    | InvalidCommand (c) -> print_endline "That's an invalid command."; repl st
+    | InvalidRaise -> print_endline "That's an invalid amount."; repl st
+    | GameOver (win_id) -> begin
+        if win_id = "AI" then lose_message () else win_message ()
+      end
+    | _ -> repl st
+    in 
     match user_input with
     | Call -> begin
         print_endline ("You have just Called.");

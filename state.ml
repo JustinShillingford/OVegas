@@ -3,6 +3,14 @@ open Table
 open Player
 open Command
 
+exception Illegal
+exception InvalidBet
+exception InvalidRaise
+exception Invalid
+exception Tie
+exception GameOver of string
+exception InvalidCommand of command
+
 type state = {players: player list; play_round: int; bet_round: int; pot:int; table: table; latest_bet:int; curr_player: player; message: string}
 
 let initial_state player_list deck =
@@ -13,6 +21,9 @@ let string_of_state st =
 
 let is_human st =
   st.curr_player = List.nth st.players 0
+
+let is_valid_command c = 
+  failwith "Unimplemented"  
 
 (* Remove p argument from do' *)
 let do' st c =
