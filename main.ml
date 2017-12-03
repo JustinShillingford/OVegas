@@ -13,7 +13,7 @@ let rec repl st =
     let next_state = try do' st user_input with e ->
       match e with
       | InvalidBet -> print_endline "That's an invalid bet."; st
-      | InvalidCommand (c) -> print_endline "That's an invalid command."; st
+      | InvalidCommand (c) -> ANSITerminal.(print_string [red] "That's an invalid command.\n"); st
       | InvalidRaise -> print_endline "That's an invalid amount."; st
       | GameOver (win_id) -> begin
           if (win_id = "AI") then (lose_message (); st) else (win_message (); st)
@@ -105,6 +105,7 @@ let playgame () =
   let player2 = init_player "AI" (snd player1) in
   let init_st = initial_state [fst player1; fst player2] (snd player2) in
   build_table init_st;
+  ANSITerminal.(print_string [green] "\n\t\t      GAME START\n");
   repl init_st
 
 let () = playgame ()
