@@ -23,6 +23,9 @@ let initial_state player_list deck =
 let string_of_state st =
   failwith "Unimplemented"
 
+let is_human st =
+  st.curr_player = List.nth st.players 0
+
 let is_valid_command c =
   failwith "Unimplemented"
 

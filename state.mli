@@ -26,3 +26,5 @@ val do' : state -> Command.command -> state
 val blinds : state -> state
 
 val next_player : state -> Player.player
+
+val is_human : state -> bool
