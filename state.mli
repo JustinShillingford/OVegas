@@ -11,6 +11,8 @@ val string_of_state : state -> string
 
 val is_human : state -> bool
 
+val is_valid_command : Command.command -> bool
+
 (* [do st cmd] is the new state of the game after the current player used the
  * command [cmd]. *)
 val do' : state -> Command.command -> state
