@@ -25,4 +25,6 @@ let parse str =
     | "fold" -> Fold
     | "bet" -> Bet (int_of_string second_half)
     | "quit" -> Quit
+    | "check" -> Check
+    | "raise" -> Raise (int_of_string second_half)
     |_-> raise Illegal
