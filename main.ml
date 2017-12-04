@@ -78,7 +78,8 @@ let rec repl st =
       | _ -> st in
     if next_state.message="quit" then ()
     else if next_state = st then (repl st) else begin
-    (Unix.sleep 2);
+      print_endline "AI is thinking...";
+      (Unix.sleep 2);
     match ai_input with
     | Call -> begin
         print_endline ("AI has just Called.");
