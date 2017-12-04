@@ -123,7 +123,7 @@ let build_table s =
   let humanCards = human.two_cards in
   let aiCards = ai.two_cards in
   let phuman_str = human.id in
-  let phuman_pot = string_of_int human.money in  
+  let phuman_pot = string_of_int human.money in
   let ai_pot = string_of_int ai.money in
   let middleCards = match snd table with
     | None -> []
@@ -133,7 +133,7 @@ let build_table s =
 
   let top_line = "\n┌───────────────────────────────────────────────────────────────────────┐" in
   let bot_line = "\n└───────────────────────────────────────────────────────────────────────┘" in
-  
+
   if (round <= 1 && middleSize == 0) then begin
     print_endline top_line;
     print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
@@ -189,9 +189,9 @@ let win_message () =
   ANSITerminal.(print_string [red; Blink] "
                                    .''.
        .''.      .        *''*    :_\\/_:     .
-      :_\\/_:   _\(/_  .:.*_\\/_*   : /\\ :  .'.:.'.
+      :_\\/_:   _\\(/_  .:.*_\\/_*   : /\\ :  .'.:.'.
   .''.: /\\ :   ./)\\   ':'* /\\ * :  '..'.  -=:o:=-
- :_\\/_:'.:::.    ' *''*    * '.\'/.' _\(/_'.':'.'
+ :_\\/_:'.:::.    ' *''*    * '.\'/.' _\\(/_'.':'.'
  : /\\ : :::::     *_\\/_*     -= o =-  /)\\    '  *
   '..'  ':::'     * /\\ *     .'/.\'.   '
       *            *..*         :
