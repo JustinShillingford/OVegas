@@ -378,7 +378,7 @@ let round_over st =
         let st = {st with players = new_player_list} in
         let new_curr_player =next_player st in
         let new_st = {st with play_round=st.play_round+1; curr_player=new_curr_player; first_action=true; latest_st_command=None} in
-        {new_st with message = winning_player.id ^ "won the round!"}
+        {new_st with message = winning_player.id ^ " won the round!"}
     end
   with
   |Tie ->
