@@ -20,6 +20,15 @@ let initial_state player_list deck =
    latest_bet=0; curr_player=(List.nth player_list 0); message= "";first_action=true;
    latest_st_command=None}
 
+(* let command_to_string c =
+  match c with
+  |Call -> "call"
+  |Raise(x) -> "raise"
+  |Fold -> "fold"
+  |Check ->"check"
+  |Quit -> "quit"
+  |Bet(x) -> "bet" *)
+
 (* [card_list_wo_options c_option_list] is a helper function that returns the card list
    without the options*)
 let card_list_wo_options c_option_list =
@@ -447,7 +456,7 @@ let do_raise st m =
     {st with players=new_players;  pot=st.pot +m; latest_bet=m;
     curr_player=next_player st; first_action=false; latest_st_command= Some "raise"}
   else
-    raise InvalidRaise
+    if m=(-1) then (raise (InvalidCommand (Raise (-1)))) else (raise InvalidRaise)
 
 (*valid commands*)
 let is_valid_command st c=
@@ -497,7 +506,8 @@ let do' st c =
     else new_st
     end
   else
-    raise (InvalidCommand c)
+    (print_endline "here";
+    raise (InvalidCommand c))
 
 (*[blinds st] returns the new state after p1 and p2 have put in their small and big blinds*)
 let blinds st =

@@ -27,7 +27,7 @@ let parse str =
     | "quit" -> Quit
     | "check" -> Check
     | "raise" -> Raise (int_of_string second_half)
-    |_-> raise Illegal
+    |_-> Raise (-1)
 
 let cmd_to_string cmd =
   match cmd with

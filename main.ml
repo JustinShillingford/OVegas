@@ -22,9 +22,6 @@ let rec repl st =
   let st = if (st.bet_round=0) then (blinds st) else st in
   build_table st;
   print_endline st.message;
-
-  print_endline ((st.curr_player.id)^(string_of_int st.curr_player.money));
-  print_endline (((next_player st).id)^(string_of_int (next_player st).money));
   if (st.curr_player.is_human) then begin
     print_endline ("Enter an action.");
     print_endline ("The valid commands are: " ^ valid_command_helper st);
@@ -38,12 +35,13 @@ let rec repl st =
       | InvalidCommand (c) -> ANSITerminal.(print_string [red] "That's an invalid command.\n\n"); st
       | InvalidRaise -> ANSITerminal.(print_string [red] "That's an invalid amount."); st
       | GameOver (win_id) -> begin
-          if (win_id = "AI") then (lose_message (); {st with message="quit"})
-        else (win_message (); {st with message="quit"})
+          if (win_id = "AI") then (build_table {st with bet_round=5}; lose_message (); {st with message="quit"})
+        else (build_table {st with bet_round=5}; win_message (); {st with message="quit"})
         end
-      | _ -> st
+      | _ -> (st)
     in
-    if next_state = st then (repl st) else begin
+    if next_state.message="quit" then ()
+    else if next_state = st then (repl st) else begin
       match user_input with
       | Call -> begin
           print_endline ("You have just Called.");
@@ -74,11 +72,12 @@ let rec repl st =
       match e with
       | GameOver (win_id) ->
         begin
-        if (win_id = "AI") then (lose_message (); {st with message="quit"})
-        else (win_message (); {st with message="quit"})
+        if (win_id = "AI") then (build_table {st with bet_round=5}; lose_message (); {st with bet_round=5; message="quit"})
+        else (build_table {st with bet_round=5}; win_message (); {st with bet_round=5; message="quit"})
         end
       | _ -> st in
-    if next_state = st then (repl st) else begin
+    if next_state.message="quit" then ()
+    else if next_state = st then (repl st) else begin
     match ai_input with
     | Call -> begin
         print_endline ("AI has just Called.");
