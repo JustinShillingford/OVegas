@@ -34,9 +34,9 @@ let rec repl st =
       | InvalidBet -> print_endline "That's an invalid bet."; st
       | InvalidCommand (c) -> ANSITerminal.(print_string [red] "That's an invalid command.\n\n"); st
       | InvalidRaise -> ANSITerminal.(print_string [red] "That's an invalid amount."); st
-      | GameOver (win_id) -> begin
-          if (win_id = "AI") then (build_table {st with bet_round=5}; lose_message (); {st with message="quit"})
-        else (build_table {st with bet_round=5}; win_message (); {st with message="quit"})
+      | GameOver (win_id,s) -> begin
+          if (win_id = "AI") then (build_table {s with bet_round=5}; lose_message (); {st with message="quit"})
+        else (build_table {s with bet_round=5}; win_message (); {st with message="quit"})
         end
       | _ -> (st)
     in
@@ -70,14 +70,15 @@ let rec repl st =
     let ai_input = ai_command st in
     let next_state = try do' st ai_input with e ->
       match e with
-      | GameOver (win_id) ->
+      | GameOver (win_id,s) ->
         begin
-        if (win_id = "AI") then (build_table {st with bet_round=5}; lose_message (); {st with bet_round=5; message="quit"})
-        else (build_table {st with bet_round=5}; win_message (); {st with bet_round=5; message="quit"})
+        if (win_id = "AI") then (build_table {s with bet_round=5}; lose_message (); {st with bet_round=5; message="quit"})
+        else (build_table {s with bet_round=5}; win_message (); {st with bet_round=5; message="quit"})
         end
       | _ -> st in
     if next_state.message="quit" then ()
     else if next_state = st then (repl st) else begin
+    (Unix.sleep 2);
     match ai_input with
     | Call -> begin
         print_endline ("AI has just Called.");

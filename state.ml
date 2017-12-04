@@ -8,12 +8,13 @@ exception InvalidBet
 exception InvalidRaise
 exception Invalid
 exception Tie
-exception GameOver of string
 exception InvalidCommand of command
 
 type state = {players: player list; play_round: int; bet_round: int; pot:int;
               table: table; latest_bet:int; curr_player: player; message: string;
               first_action: bool; latest_st_command: string option}
+
+exception GameOver of string*state
 
 let initial_state player_list deck =
   {players = player_list; play_round = 0; bet_round = 0; pot = 0; table=(deck, None);
@@ -368,10 +369,11 @@ let round_over st =
       let p2_won_money = if p2=winning_player then st.pot else 0 in
       let new_p2 = {p2 with money=p2.money + p2_won_money; latest_command=None; remaining_in_round=true} in
 
+      let s = {st with players=[new_p1;new_p2]; pot=0} in
       if (new_p1.money<20) then
-        raise (GameOver new_p2.id)
+        raise (GameOver (new_p2.id,s))
       else if (new_p2.money<20) then
-        raise (GameOver new_p1.id)
+        raise (GameOver (new_p1.id,s))
 
       else
         let new_player_list = [new_p1; new_p2] in
@@ -418,10 +420,10 @@ let do_fold st =
   let other_player = next_player st in
   let other_player_changed = {other_player with money=other_player.money+st.pot} in
   let new_players = List.map (fun x -> if x.id=other_player_changed.id then other_player_changed else x) st.players in
-  if (st.curr_player.money<20) then raise (GameOver other_player_changed.id) else
   (* {(initial_state new_players (shuffle (new_deck()))) with curr_player=other_player_changed} *)
   let new_st = {st with players=new_players; play_round = st.play_round + 1; bet_round=0; pot=0; table=((shuffle (new_deck())), None);
            latest_bet=0; curr_player= other_player_changed; first_action=true; latest_st_command = Some "fold"} in
+  if (st.curr_player.money<20) then raise (GameOver (other_player_changed.id,new_st)) else
   new_play_round new_st
 
 (*[possible_bet p x] is a boolean representing if the player [p] is betting at

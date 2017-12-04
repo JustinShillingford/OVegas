@@ -1,7 +1,6 @@
 exception InvalidBet
 exception InvalidRaise
 exception Tie
-exception GameOver of string
 exception InvalidCommand of Command.command
 
 (* [state] is a combination of players, a table, a counter keeping track of
@@ -9,6 +8,8 @@ exception InvalidCommand of Command.command
  type state = {players: Player.player list; play_round: int; bet_round: int; pot:int; table: Table.table; latest_bet:int;
               curr_player: Player.player; message: string;
               first_action: bool; latest_st_command: string option}
+
+exception GameOver of string*state
 
 (* [initial_state] is the initial value of a state in a typical game with
  * the initial value of players and the initial value of a table. *)
