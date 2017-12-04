@@ -15,7 +15,11 @@ let parse str =
     else
       trimmed_str in
   let second_half =
-    if (String.contains trimmed_str ' ') then
+    if (String.contains trimmed_str '$') then
+      let first_dollar = String.index trimmed_str '$' in
+      let string_len = (String.length trimmed_str - (first_dollar + 1)) in
+      String.sub trimmed_str (first_dollar + 1) string_len
+    else if (String.contains trimmed_str ' ') then
       let string_len = (String.length trimmed_str - (first_space + 1)) in
       String.sub trimmed_str (first_space + 1) string_len
     else
