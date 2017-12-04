@@ -122,6 +122,7 @@ let playgame () =
     - The dealer spreads five cards - three at once, then another, then another - which can be used by all players to make their best possible five-card hand
     - Before and after each card(s) is revealed, players take turns to bet. To stay in the hand and see the next card, all players must have put the same amount of chips in the pot as each other
     - The best poker hand wins the pot
+    If you ever get to less than $20 at the beginning of a round, you automatically lose since you won't be able to make the blind bets.
     It's a seemingly simple game, but there's tons of strategies to win. Good luck!
   ");
   repl init_st

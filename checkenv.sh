@@ -27,14 +27,6 @@ else
   environment=bad
 fi
 
-YOJSON_VERSION="$(opam info yojson -f installed-version 2>&1)"
-if [[ "$YOJSON_VERSION" =~ "1.4.0" && "$YOJSON_VERSION" =~ "4.05.0" ]]; then
-  echo "Yojson version 1.4.0 is active.  Good."
-else
-  echo "Yojson version 1.4.0 is NOT active.  This is bad."
-  environment=bad
-fi
-
 ANSITERMINAL_VERSION="$(opam info ansiterminal -f installed-version 2>&1)"
 if [[ "$ANSITERMINAL_VERSION" =~ "0.7" && "$ANSITERMINAL_VERSION" =~ "4.05.0" ]]; then
   echo "ANSITerminal version 0.7 is active.  Good."

@@ -105,6 +105,7 @@ let print_five_cards (r1,s1) (r2,s2) (r3,s3) (r4,s4) (r5,s5) =
 let print_pot p =
   if (p/10 = 0) then print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t\t\t│\n")
   else if (p/100 = 0) then print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t\t│\n")
+  else if (p/1000 = 0) then print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t\t│\n")
   else print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t│\n")
 
 let print_no_cards p =
@@ -123,7 +124,7 @@ let build_table s =
   let humanCards = human.two_cards in
   let aiCards = ai.two_cards in
   let phuman_str = human.id in
-  let phuman_pot = string_of_int human.money in  
+  let phuman_pot = string_of_int human.money in
   let ai_pot = string_of_int ai.money in
   let middleCards = match snd table with
     | None -> []
@@ -133,54 +134,63 @@ let build_table s =
 
   let top_line = "\n┌───────────────────────────────────────────────────────────────────────┐" in
   let bot_line = "\n└───────────────────────────────────────────────────────────────────────┘" in
-  
-  if (round <= 1 && middleSize == 0) then begin
+  if (middleSize == 0) then begin
     print_endline top_line;
-    print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
+    if String.length ai_pot = 1 then print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t\t│") 
+    else print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
     print_facedown ();
     print_no_cards pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
+    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t\t│") 
+    else print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
     print_endline bot_line
   end
-  else if (round == 2 && middleSize == 3) then begin
+  else if (middleSize == 3) then begin
     print_endline top_line;
-    print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
+    if String.length ai_pot = 1 then print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t\t│") 
+    else print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
     print_facedown ();
     print_three_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2);
     print_pot pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
+    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t\t│") 
+    else print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
     print_endline bot_line
   end
-  else if (round == 3 && middleSize == 4) then begin
+  else if (middleSize == 4) then begin
     print_endline top_line;
-    print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
+    if String.length ai_pot = 1 then print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t\t│") 
+    else print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
     print_facedown ();
     print_four_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3);
     print_pot pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
-    print_endline bot_line
-  end
-  else if (round == 4 && middleSize == 5) then begin
-    print_endline top_line;
-    print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
-    print_facedown ();
-    print_five_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3) (List.nth middleCards 4);
-    print_pot pot;
-    print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
+    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t\t│") 
+    else print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
     print_endline bot_line
   end
   else if (round == 5 && middleSize == 5) then begin
     print_endline top_line;
-    print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
+    if String.length ai_pot = 1 then print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t\t│") 
+    else print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
     print_two_cards (List.hd aiCards) (List.nth aiCards 1);
     print_five_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3) (List.nth middleCards 4);
     print_pot pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
+    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t\t│") 
+    else print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
+    print_endline bot_line
+  end
+  else if (middleSize == 5) then begin
+    print_endline top_line;
+    if String.length ai_pot = 1 then print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t\t│") 
+    else print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
+    print_facedown ();
+    print_five_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3) (List.nth middleCards 4);
+    print_pot pot;
+    print_two_cards (List.hd humanCards) (List.nth humanCards 1);
+    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t\t│") 
+    else print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
     print_endline bot_line
   end
   else raise Mismatch
@@ -189,9 +199,9 @@ let win_message () =
   ANSITerminal.(print_string [red; Blink] "
                                    .''.
        .''.      .        *''*    :_\\/_:     .
-      :_\\/_:   _\(/_  .:.*_\\/_*   : /\\ :  .'.:.'.
+      :_\\/_:   _\\(/_  .:.*_\\/_*   : /\\ :  .'.:.'.
   .''.: /\\ :   ./)\\   ':'* /\\ * :  '..'.  -=:o:=-
- :_\\/_:'.:::.    ' *''*    * '.\'/.' _\(/_'.':'.'
+ :_\\/_:'.:::.    ' *''*    * '.\'/.' _\\(/_'.':'.'
  : /\\ : :::::     *_\\/_*     -= o =-  /)\\    '  *
   '..'  ':::'     * /\\ *     .'/.\'.   '
       *            *..*         :
