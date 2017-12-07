@@ -7,6 +7,8 @@ type deck = card list
 
 type table = deck * card list option
 
+(* [has13ofSuitHelper d h c d s] is true if [d] has thirteen cards for each distinct 
+   suit, false otherwise *)
 let rec has13ofSuitHelper (d:deck) hrt clb dmd spd =
   match d with
   | [] -> (spd = 13) && (clb = 13) && (hrt = 13) && (dmd = 13)
@@ -18,6 +20,8 @@ let rec has13ofSuitHelper (d:deck) hrt clb dmd spd =
       | Spade -> has13ofSuitHelper t hrt clb dmd (spd + 1)
   end
 
+(* [has4ofRankHelper d rArr] is true if [d] has four cards of each distinct 
+   rank, false otherwise *)
 let rec has4ofRankHelper (d:deck) rankArray =
   match d with
   | [] -> Array.fold_left (fun acc x -> acc && (x=4)) true rankArray
@@ -46,6 +50,7 @@ let shuffle d =
     end in
   shuffle_helper [] (rep_ok d)
 
+(* [suit_from_n n] is the suit representation of the int [n] *)
 let suit_from_n n =
   match n with
   | 0 -> Heart

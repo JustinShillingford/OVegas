@@ -5,6 +5,8 @@ open Command
 open Ai
 open Ui
 
+(* [valid_command_helper st] is the string of valid commands in [st] as compiled
+   by running all possible commands through [is_valid_command] for [st]. *)
 let valid_command_helper st =
   let rec valid_command_helper_ii st cmd_list acc =
     match cmd_list with
