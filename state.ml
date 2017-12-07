@@ -346,7 +346,7 @@ let make_flop_cards st =
   of the shared cards is flipped onto the table*)
 let make_turn_or_river_card st =
   let new_table = flip_new_card st.table  in
-  {st with table = new_table; latest_bet=0}
+  {st with table = new_table}
 
 (* This function assumes there's only two players  *)
 let next_player st =
@@ -431,10 +431,17 @@ let cmd_ends_betting_round st c =
 
 (*[do_call st p] is the state once player [p] calls in state [st]*)
 let do_call st  =
+
+print_endline(string_of_int st.curr_player.money);
+print_endline(string_of_int (next_player st).money_in_pot);
+print_endline(string_of_int (st.curr_player).money_in_pot);
+print_endline(string_of_int (next_player st).money_in_pot);
   let p_changed = {st.curr_player with latest_command = Some "call";
-                  money_in_pot=st.latest_bet;
-                  money=((st.curr_player).money-((next_player st).money_in_pot
-                  -(st.curr_player).money_in_pot))} in
+
+                  money=(st.curr_player).money-((next_player st).money_in_pot
+                                                -(st.curr_player).money_in_pot);
+                                       money_in_pot=(next_player st).money_in_pot;} in
+  print_endline(string_of_int st.curr_player.money);
   let new_players = (List.map
                        (fun x -> if x=st.curr_player then p_changed else x)
                        st.players) in
@@ -453,17 +460,19 @@ let do_check st =
 
 (*[do_fold st p] is the state once player [p] folds in state [st]*)
 let do_fold st =
+  print_endline(string_of_int st.pot);
   let otherp = next_player st in
-  let other_pl = {otherp with money=otherp.money+st.pot} in
+  let other_pl = {otherp with money=otherp.money+st.pot; money_in_pot=0} in
+  let changed_curr = {st.curr_player with money_in_pot=0} in
   let new_players = (List.map
-                       (fun x -> if x.id=other_pl.id then other_pl else x)
+                       (fun x -> if x.id=other_pl.id then other_pl else changed_curr)
                        st.players) in
   let new_st = {st with players=new_players; play_round = st.play_round + 1;
                         bet_round=0; pot=0; table=(fst st.table, None);
                         latest_bet=0; curr_player= other_pl; first_action=true;
                         latest_st_command = Some "fold"} in
   if (st.curr_player.money<20) then raise (GameOver (other_pl.id,new_st)) else
-  if ((List.length (fst new_st.table)) >=9) then new_play_round st
+  if ((List.length (fst new_st.table)) >=9) then new_play_round new_st
   else new_play_round_new_deck new_st
 
 (*[possible_bet p x] is a boolean representing if the player [p] is betting at
