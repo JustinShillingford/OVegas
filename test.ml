@@ -27,11 +27,16 @@ let command_tests = [
   "raise2" >:: (fun _ -> assert_equal (Raise(0)) (parse "raise 0"));
 ]
 
+let player_tests = [
+  
+]
+
 let test_suite =
   "Poker test suite"  >::: List.flatten [
     prac_tests;
     card_tests;
     command_tests;
+    player_tests;
   ]
 
 let _ = run_test_tt_main test_suite

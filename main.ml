@@ -105,6 +105,13 @@ let rec repl st =
     end
   end
 
+(* [which_diff inp] is the difficulty of game the player decides. 
+    Defaults to medium difficulty if the user provides invalid input. *)
+let which_diff inp = 
+  let s = String.lowercase_ascii (String.trim inp) in 
+  if s = "easy" || s = "medium" || s = "hard" then s 
+  else "medium"
+
 let playgame () =
   ANSITerminal.(print_string [red] "\nWelcome to OVegas, the OCaml Texas Hold'em!");
   ANSITerminal.(print_string [cyan] "
@@ -114,6 +121,7 @@ let playgame () =
     - Before and after each card(s) is revealed, players take turns to bet. To stay in the hand and see the next card, all players must have put the same amount of chips in the pot as each other
     - The best poker hand wins the pot
     If you ever get to less than $20 at the beginning of a round, you automatically lose since you won't be able to make the blind bets.
+    If you don't enter a valid difficulty, the game will default to Medium difficulty. 
     It's a seemingly simple game, but there's tons of strategies to win. Good luck!\n");
   print_endline "Please enter your name.";
   print_string "> ";
@@ -122,7 +130,11 @@ let playgame () =
    * players. Need to find way to use these names in st for the repl. *)
   let player1 = init_player player1_name (shuffle (new_deck ())) in
   let player2 = init_player "AI" (snd player1) in
-  let init_st = initial_state [fst player1; fst player2] (snd player2) in
+  print_endline "Choose a difficulty: Easy, Medium, or Hard"; 
+  print_string "> ";
+  let diff_input = read_line () in 
+  let diff = which_diff diff_input in
+  let init_st = initial_state [fst player1; fst player2] (snd player2) diff in
   (* build_table init_st; *)
   ANSITerminal.(print_string [green] "\n\t\t\t      GAME START\n");  
   repl init_st
