@@ -5,10 +5,7 @@ exception EmptyDeck
 
 type deck = card list
 
-(* type pot = (player * int) list *)
-
 type table = deck * card list option
-(* type table = deck * pot * card list *)
 
 let rec has13ofSuitHelper (d:deck) hrt clb dmd spd =
   match d with

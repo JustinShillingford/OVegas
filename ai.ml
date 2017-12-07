@@ -4,15 +4,15 @@ open Command
 open Player
 open Table
 
-(*[card_rank_compare (r1,s1) (r2,s2)] is the comparison function between r1 and r2.*)
+(* [card_rank_compare (r1,s1) (r2,s2)] is the comparison function between r1 and r2. *)
 let card_rank_compare (r1,s1) (r2,s2) =
   Pervasives.compare r1 r2
 
-(*[sort_by_ranking cards] is the sorted list of cards by rank.*)
+(* [sort_by_ranking cards] is the sorted list of cards by rank. *)
 let sort_by_ranking cards =
   List.sort card_rank_compare cards
 
-(*[get_suit_value s] is the integer value of a suit*)
+(* [get_suit_value s] is the integer value of a suit *)
 let get_suit_value s =
   match s with
   | Club -> 1
@@ -20,17 +20,17 @@ let get_suit_value s =
   | Heart -> 3
   | Spade -> 4
 
-(*[card_suit_compare (r1,s1) (r2,s2)] is the comparison function between s1 and s2.*)
+(* [card_suit_compare (r1,s1) (r2,s2)] is the comparison function between s1 and s2. *)
 let card_suit_compare (r1,s1) (r2,s2) =
   let v1 = get_suit_value s1 in
   let v2 = get_suit_value s2 in
   Pervasives.compare v1 v2
 
-(*[sort_by_suit cards] is the sorted list of cards by suit.*)
+(* [sort_by_suit cards] is the sorted list of cards by suit. *)
 let sort_by_suit cards =
   List.sort card_suit_compare cards
 
-(*[get_ranks cards] is a list of the ranks in the list cards.*)
+(* [get_ranks cards] is a list of the ranks in the list cards. *)
 let get_ranks cards =
   let rec get_ranks_helper cards acc =
     match cards with
@@ -38,7 +38,7 @@ let get_ranks cards =
     | (r1,_)::t -> get_ranks_helper t (r1::acc)
   in get_ranks_helper cards []
 
-(*[get_suits cards] is a list of the suits in the list cards*)
+(* [get_suits cards] is a list of the suits in the list cards *)
 let get_suits cards =
   let rec get_suits_helper cards acc =
     match cards with
@@ -46,14 +46,14 @@ let get_suits cards =
     | (_,s1)::t -> get_suits_helper t (s1::acc)
   in get_suits_helper cards []
 
-(*[ai_has_high_card cards] checks if the AI has currently a high card in hand.*)
+(* [ai_has_high_card cards] checks if the AI has currently a high card in hand. *)
 let ai_has_high_card cards =
   match cards with
   | (r1,s1)::(r2,s2)::t ->
     if r1=13 || r1=12 || r1=11 || r2=13 || r2=12 || r2=11 then true else false
   | _ -> false
 
-(*[ai_has_pair cards] checks if the AI's cards and the table contain a pair*)
+(* [ai_has_pair cards] checks if the AI's cards and the table contain a pair *)
 let ai_has_pair cards =
   let sorted_cards = sort_by_ranking cards in
   let sorted_ranks = get_ranks sorted_cards in
@@ -64,8 +64,8 @@ let ai_has_pair cards =
     | _ -> false
   in has_pair_helper sorted_ranks
 
-(*[ai_has_two_pair cards] checks if the AI's cards and the table contains
- *a two pair.*)
+(* [ai_has_two_pair cards] checks if the AI's cards and the table contains
+ * a two pair. *)
 let ai_has_two_pair cards =
   let sorted_cards = sort_by_ranking cards in
   let sorted_ranks = get_ranks sorted_cards in
@@ -78,8 +78,8 @@ let ai_has_two_pair cards =
     | _ -> false
   in has_two_pair_helper sorted_ranks false
 
-(*[ai_has_three_kind cards] checks if the AI's cards and the table contain
- *a three of a kind.*)
+(* [ai_has_three_kind cards] checks if the AI's cards and the table contain
+ * a three of a kind. *)
 let ai_has_three_kind cards =
   if (List.length cards)<3 then ai_has_pair cards
   else
@@ -92,15 +92,15 @@ let ai_has_three_kind cards =
       | _ -> false
     in has_three_kind_helper sorted_ranks
 
-(*[straight sorted_ranks] checks if after sorting, the ranks contain a straight.*)
+(* [straight sorted_ranks] checks if after sorting, the ranks contain a straight. *)
 let rec straight sorted_ranks =
     match sorted_ranks with
     | r1::r2::t ->
       if r1+1=r2 then straight (r2::t) else false
     | _ -> true
 
-(*[ai_has_straight cards] checks if the AI's cards and the table contains
- *a straight.*)
+(* [ai_has_straight cards] checks if the AI's cards and the table contains
+ * a straight. *)
 let ai_has_straight cards =
   let sorted_cards = sort_by_ranking cards in
   let sorted_ranks = get_ranks sorted_cards in
@@ -111,15 +111,15 @@ let ai_has_straight cards =
     straight [r1;r2;r3;r4;r5] || straight [r2;r3;r4;r5;r6] || straight [r3;r4;r5;r6;r7]
   | _ -> straight sorted_ranks
 
-(*[straight sorted_suits] checks if after sorting, the ranks contain a flush.*)
+(* [straight sorted_suits] checks if after sorting, the ranks contain a flush. *)
 let rec flush sorted_suits =
   match sorted_suits with
   | s1::s2::t ->
     if s1=s2 then flush (s2::t) else false
   | _ -> true
 
-(*[ai_has_flush cards] checks if the AI's cards and the table contains
- *a flush.*)
+(* [ai_has_flush cards] checks if the AI's cards and the table contains
+ * a flush. *)
 let ai_has_flush cards =
   let sorted_cards = sort_by_suit cards in
   let sorted_suits = get_suits sorted_cards in
@@ -130,8 +130,8 @@ let ai_has_flush cards =
     flush [s1;s2;s3;s4;s5] || flush [s2;s3;s4;s5;s6] || flush [s3;s4;s5;s6;s7]
   | _ -> flush sorted_suits
 
-(*[ai_has_full house cards] checks if the AI's cards and the table contains
- *a full house.*)
+(* [ai_has_full house cards] checks if the AI's cards and the table contains
+ * a full house. *)
 let ai_has_full_house cards =
   let sorted_cards = sort_by_ranking cards in
   let sorted_ranks = get_ranks sorted_cards in
@@ -148,8 +148,8 @@ let ai_has_full_house cards =
     | _ -> false
   in has_full_house_helper sorted_ranks false false
 
-(*[ai_has_four_kind cards] checks if the AI's cards and the table contains
- *a four of a kind.*)
+(* [ai_has_four_kind cards] checks if the AI's cards and the table contains
+ * a four of a kind. *)
 let ai_has_four_kind cards =
   if (List.length cards)<4 then ai_has_three_kind cards
   else
@@ -162,12 +162,12 @@ let ai_has_four_kind cards =
       | _ -> false
     in has_four_kind_helper sorted_ranks
 
-(*[ai_has_straight_flush cards] checks if the AI's cards and the table contains
- *a straight flush.*)
+(* [ai_has_straight_flush cards] checks if the AI's cards and the table contains
+ * a straight flush. *)
 let ai_has_straight_flush cards =
   ai_has_straight cards && ai_has_flush cards
 
-(*[royal_flush cards] checks if the flush has the required card rankings.*)
+(* [royal_flush cards] checks if the flush has the required card rankings. *)
 let royal_flush cards =
   let ranks = get_ranks cards in
   if not (ai_has_straight_flush cards) then false else
@@ -180,8 +180,8 @@ let royal_flush cards =
     then true else false
   | _ -> false
 
-(*[ai_has_royal_flush cards] checks if the AI's cards and the table contains
- *a royal flush.*)
+(* [ai_has_royal_flush cards] checks if the AI's cards and the table contains
+ *a royal flush. *)
 let ai_has_royal_flush cards =
   let cards = sort_by_ranking cards in
   match cards with
@@ -192,8 +192,8 @@ let ai_has_royal_flush cards =
     || royal_flush [c3;c4;c5;c6;c7]
   | _ -> royal_flush cards
 
-(*[rank cards] returns the integer value of the best combination currently
- *in cards.*)
+(* [rank cards] returns the integer value of the best combination currently
+ * in cards. *)
 let rank cards =
   if ai_has_royal_flush cards then 10
   else if ai_has_straight_flush cards then 9
@@ -207,18 +207,18 @@ let rank cards =
   else if ai_has_high_card cards then 1
   else 0
 
-(*[option_to_list lst] returns the empty list if the option is None or the
- *list inside the option if it's Some list.*)
+(* [option_to_list lst] returns the empty list if the option is None or the
+ * list inside the option if it's Some list. *)
 let option_to_list lst =
   match lst with
   | None -> []
   | Some x -> x
 
-(*[all_card_combinations k c_list] returns all possible combinations of
- *k elements from list [c_list]
- *Referenced:
- *https://codereview.stackexchange.com/questions/40366/
- *combinations-of-size-k-from-a-list-in-ocaml*)
+(* [all_card_combinations k c_list] returns all possible combinations of
+ * k elements from list [c_list]
+ * Referenced:
+ * https://codereview.stackexchange.com/questions/40366/
+ * combinations-of-size-k-from-a-list-in-ocaml *)
 let rec all_card_combinations k c_list =
   if k = 0 then
     [[]]
