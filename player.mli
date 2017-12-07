@@ -1,4 +1,3 @@
-
 (* [hand] is the type of a hand. It's a combination of two cards. *)
 type hand = Card.card list
 
