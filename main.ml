@@ -105,15 +105,45 @@ let rec repl st =
     end
   end
 
-(* [which_diff inp] is the difficulty of game the player decides. 
+(* [which_diff inp] is the difficulty of game the player decides.
     Defaults to medium difficulty if the user provides invalid input. *)
-let which_diff inp = 
-  let s = String.lowercase_ascii (String.trim inp) in 
-  if s = "easy" || s = "medium" || s = "hard" then s 
+let which_diff inp =
+  let s = String.lowercase_ascii (String.trim inp) in
+  if s = "easy" || s = "medium" || s = "hard" then s
   else "medium"
 
 let playgame () =
   ANSITerminal.(print_string [red] "\nWelcome to OVegas, the OCaml Texas Hold'em!");
+  print_endline "";
+  ANSITerminal.(print_string [yellow] "
+            H4sI         CK
+           MhvE0AA     3RleHQu
+          dHh0AG2S    MXLcMAxF
+          e58CB9BoJs5MinSbIpM0         Kdyk
+          5oqQiCwF7pCUFXU+hn09ny     Qf1GrdpK
+        FmCAj//weelFL0tLKLNWx0Zp   8WUSqB5RJoza
+        kyBSm0Sozk1JOXZ/Hs2+WYcl2  UO3IUXZ7QydlTG
+      mlwM8eC+znp1FpryMxUkpaeTkOY2 Xe4Y+LouVQrd
+    LQ69CUSxRiprTx         dnNonqLsIwoPCcbaiB
+    LSgjgTV3ga0     OVegas        ms6Khp5+B9Z
+dw     OHMy           by           EgMtMmKjp9
+       ZD    Johanna      Ghassane
+      8N2    Mishcat  &   Justin   sQz1sNELO
+
+      o7pkx sd2a  ts      kjdlfkjslfjasslkd
+      igzG  Zo3m  5penpim0FGP9HcKEcX2vahCFw
+      F2J  La95       pKkXPk95e3nn6lFf6kB
+      vr0  eN++        mbDnUgR/WFh2ZTsQ0Z
+      RqC  2rL         7ejL8RfW2k   of
+      6/t  8H3            gs8th
+      aR    493           5ycA
+      F     WA           +Hl
+      Zd    OY7          w0+
+      pNP    fII2       MAHk
+      DKE     HdmF     r7Ut
+      Y4QlQ   4uN3l    56cN
+                       erYOGZ
+  ");
   ANSITerminal.(print_string [cyan] "
     Texas Hold'em Poker is the world's most popular poker game, both in casinos and online. Here are the key things you need to know:
     - Every player is dealt two cards, for their eyes only
@@ -123,7 +153,6 @@ let playgame () =
     The commands in this game are Call, Fold, Bet, Check, Raise, and Quit. Each round, you will see what the valid commands are in that round based on the table and your remaining money.
     If you ever get to less than $20 at the beginning of a round, you automatically lose since you won't be able to make the blind bets.
     If you don't enter a valid difficulty, the game will default to Medium difficulty.
-
     It's a seemingly simple game, but there's tons of strategies to win. Good luck!\n");
   print_endline "Please enter your name.";
   print_string "> ";
@@ -132,9 +161,9 @@ let playgame () =
    * players. Need to find way to use these names in st for the repl. *)
   let player1 = init_player player1_name (shuffle (new_deck ())) in
   let player2 = init_player "AI" (snd player1) in
-  print_endline "Choose a difficulty: Easy, Medium, or Hard"; 
+  print_endline "Choose a difficulty: Easy, Medium, or Hard";
   print_string "> ";
-  let diff_input = read_line () in 
+  let diff_input = read_line () in
   let diff = which_diff diff_input in
   let init_st = initial_state [fst player1; fst player2] (snd player2) diff in
   (* build_table init_st; *)
