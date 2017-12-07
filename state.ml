@@ -12,14 +12,23 @@ exception InvalidCommand of command
 
 type state = {players: player list; play_round: int; bet_round: int; pot:int;
               table: table; latest_bet:int; curr_player: player; message: string;
-              first_action: bool; latest_st_command: string option; difficulty_level:string}
+              first_action: bool; latest_st_command: string option; difficulty_level: string}
 
 exception GameOver of string*state
 
-let initial_state player_list deck diff =
+let initial_state player_list deck difficulty_level=
   {players = player_list; play_round = 0; bet_round = 0; pot = 0; table=(deck, None);
    latest_bet=0; curr_player=(List.nth player_list 0); message= "";first_action=true;
-   latest_st_command=None; difficulty_level=diff}
+   latest_st_command=None; difficulty_level=difficulty_level}
+
+(* let command_to_string c =
+  match c with
+  |Call -> "call"
+  |Raise(x) -> "raise"
+  |Fold -> "fold"
+  |Check ->"check"
+  |Quit -> "quit"
+  |Bet(x) -> "bet" *)
 
 (* [card_list_wo_options c_option_list] is a helper function that returns the card list
    without the options*)
@@ -334,12 +343,26 @@ let next_player st =
     end
   | _ -> failwith "johanna messed up and/or there was more than two players???"
 
-(*makes a new round after a showdown*)
+  (*makes a new round after a showdown if new deck needed*)
+  let new_play_round_new_deck st =
+    let new_deck = shuffle(new_deck()) in
+    let p1 = List.nth st.players 0 in
+    let p2 = List.nth st.players 1 in
+    let ((t, _), c1, c2) = make_hand new_deck in
+    let ((t2, _), c3, c4) = make_hand t in
+    let new_p1={p1 with two_cards = c1::c2::[]} in
+    let new_p2={p2 with two_cards = c3::c4::[]} in
+    let new_player_list = new_p1::new_p2::[] in
+    let new_st = {st with players = new_player_list; table=(t2, None)} in
+    new_st
+
+
+(*makes a new round after a showdown. Keeps same deck. *)
 let new_play_round st =
-  let new_deck = shuffle(new_deck()) in
+  let deck = fst st.table in
   let p1 = List.nth st.players 0 in
   let p2 = List.nth st.players 1 in
-  let ((t, _), c1, c2) = make_hand new_deck in
+  let ((t, _), c1, c2) = make_hand deck in
   let ((t2, _), c3, c4) = make_hand t in
   let new_p1={p1 with two_cards = c1::c2::[]} in
   let new_p2={p2 with two_cards = c3::c4::[]} in
@@ -412,10 +435,10 @@ let do_fold st =
   let other_player_changed = {other_player with money=other_player.money+st.pot} in
   let new_players = List.map (fun x -> if x.id=other_player_changed.id then other_player_changed else x) st.players in
   (* {(initial_state new_players (shuffle (new_deck()))) with curr_player=other_player_changed} *)
-  let new_st = {st with players=new_players; play_round = st.play_round + 1; bet_round=0; pot=0; table=((shuffle (new_deck())), None);
+  let new_st = {st with players=new_players; play_round = st.play_round + 1; bet_round=0; pot=0; table=(fst st.table, None);
            latest_bet=0; curr_player= other_player_changed; first_action=true; latest_st_command = Some "fold"} in
   if (st.curr_player.money<20) then raise (GameOver (other_player_changed.id,new_st)) else
-  new_play_round new_st
+  if ((List.length (fst new_st.table)) >=9) then new_play_round st else new_play_round_new_deck new_st
 
 (*[possible_bet p x] is a boolean representing if the player [p] is betting at
   least 0 and at most however much money they have. *)
@@ -438,7 +461,26 @@ let possible_raise p x =
   else if x<=(p.money) then true else false
 
 let possible_raise2 st x =
-  ((next_player st).money_in_pot-st.curr_player.money_in_pot)<x
+  ((next_player st).money_in_pot-st.curr_player.money_in_pot)<=x && x<=(next_player st).money
+
+
+let max_bet st =
+  st.curr_player.money
+
+let min_raise st =
+  let other_player_pot_money = (next_player st).money_in_pot in
+  other_player_pot_money-((st.curr_player).money_in_pot)
+
+let max_raise st =
+  (next_player st).money
+
+
+  let possible_raise p x =
+    if x<0 then false
+    else if x<=(p.money) then true else false
+
+  let possible_raise2 st x =
+    (min_raise st)<=x && x<= ((max_raise st)+(min_raise st))
 
 
 let do_raise st m =
@@ -499,8 +541,7 @@ let do' st c =
     else new_st
     end
   else
-    (print_endline "here";
-    raise (InvalidCommand c))
+    (raise (InvalidCommand c))
 
 (*[blinds st] returns the new state after p1 and p2 have put in their small and big blinds*)
 let blinds st =

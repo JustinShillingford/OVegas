@@ -7,7 +7,7 @@ exception InvalidCommand of Command.command
  * turns and rounds of the game. *)
  type state = {players: Player.player list; play_round: int; bet_round: int; pot:int; table: Table.table; latest_bet:int;
               curr_player: Player.player; message: string;
-              first_action: bool; latest_st_command: string option; difficulty_level:string}
+              first_action: bool; latest_st_command: string option; difficulty_level: string}
 
 exception GameOver of string*state
 
@@ -29,3 +29,5 @@ val blinds : state -> state
 val next_player : state -> Player.player
 
 val new_play_round : state -> state
+
+val new_play_round_new_deck : state -> state 
