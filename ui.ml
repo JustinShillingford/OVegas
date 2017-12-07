@@ -138,7 +138,7 @@ let build_table s =
   if (middleSize == 0) then begin
     print_endline top_line;
     if String.length ai_pot = 1 then print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t\t│") 
-    else print_endline ("│\t \t\tAI ^ ($" ^ ai_pot ^")\t\t\t\t\t│");
+    else print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
     print_facedown ();
     print_no_cards pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
