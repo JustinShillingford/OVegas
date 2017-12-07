@@ -21,14 +21,6 @@ let initial_state player_list deck difficulty_level=
    latest_bet=0; curr_player=(List.nth player_list 0); message= "";first_action=true;
    latest_st_command=None; difficulty_level=difficulty_level}
 
-(* let command_to_string c =
-  match c with
-  |Call -> "call"
-  |Raise(x) -> "raise"
-  |Fold -> "fold"
-  |Check ->"check"
-  |Quit -> "quit"
-  |Bet(x) -> "bet" *)
 
 (* [card_list_wo_options c_option_list] is a helper function that returns the card list
    without the options*)
@@ -261,6 +253,7 @@ let highest_hand c_list =
     has_pair c_list
   else has_high_card c_list
 
+(*[option_to_list lst] converts every element from Some x to x*)
 let option_to_list lst =
   match lst with
   | None -> raise Invalid
@@ -286,13 +279,13 @@ let is_p1_best_hand p1_cards p2_cards =
           if p1_third_rank =p2_third_rank then
             if p1_fourth_rank=p2_fourth_rank then
               if p1_fifth_rank = p2_fifth_rank then
-                raise Tie
+                raise Tie  (*players have same hand strength up till 5th card*)
               else p1_fifth_rank > p2_fifth_rank
             else p1_fourth_rank>p2_fourth_rank
           else p1_third_rank >p2_third_rank
         else p1_second_rank > p2_second_rank
       else  p1_first_rank>p2_first_rank
-    else fst p1_hand > fst p2_hand
+    else fst p1_hand > fst p2_hand (*check if player 1 has a stronger hand*)
 
 (*[compare_for_sort_hands hand1 hand2] returns 1 is hand1 is better than hand2,
   -1 if its worse, or 0 if hand1 and hand2 are tied*)
@@ -314,6 +307,8 @@ let player_best_hand player st =
   let p_best_hand = List.nth sorted_combs ((List.length sorted_combs) -1) in
   p_best_hand
 
+(*[game_best_player_hand p1 p2 st] returns the player with the best hand or raises
+  exception Tie if there is a tie*)
 let game_best_player_hand p1 p2 st=
   let best_p1_cards = player_best_hand p1 st in
   let best_p2_cards =  player_best_hand p2 st in
@@ -341,25 +336,24 @@ let next_player st =
   | p1::p2::[] -> begin
       if (st.curr_player.id = p1.id) then p2 else p1
     end
-  | _ -> failwith "johanna messed up and/or there was more than two players???"
-
-  (*makes a new round after a showdown if new deck needed*)
-  let new_play_round_new_deck st =
-    let new_deck = shuffle(new_deck()) in
-    let p1 = List.nth st.players 0 in
-    let p2 = List.nth st.players 1 in
-    let ((t, _), c1, c2) = make_hand new_deck in
-    let ((t2, _), c3, c4) = make_hand t in
-    let new_p1={p1 with two_cards = c1::c2::[]} in
-    let new_p2={p2 with two_cards = c3::c4::[]} in
-    let new_player_list = new_p1::new_p2::[] in
-    let new_st = {st with players = new_player_list; table=(t2, None)} in
-    new_st
+  | _ -> failwith "num players is not 2"
 
 
-(*makes a new round after a showdown. Keeps same deck. *)
+let new_play_round_new_deck st =
+  let new_deck = shuffle(new_deck()) in (*new deck is shuffled*)
+  let p1 = List.nth st.players 0 in
+  let p2 = List.nth st.players 1 in
+  let ((t, _), c1, c2) = make_hand new_deck in
+  let ((t2, _), c3, c4) = make_hand t in
+  let new_p1={p1 with two_cards = c1::c2::[]} in
+  let new_p2={p2 with two_cards = c3::c4::[]} in
+  let new_player_list = new_p1::new_p2::[] in
+  let new_st = {st with players = new_player_list; table=(t2, None)} in
+  new_st
+
+
 let new_play_round st =
-  let deck = fst st.table in
+  let deck = fst st.table in (* Keeps same deck. *)
   let p1 = List.nth st.players 0 in
   let p2 = List.nth st.players 1 in
   let ((t, _), c1, c2) = make_hand deck in
@@ -407,11 +401,11 @@ let round_over st =
     first_action=true; latest_st_command=None} in
     {new_st with message = "There was a TIE between you and AI in this round!"}
 
-
+(*[cmd_ends_betting_round st c] returns a boolean that tells you if a command will end the round*)
 let cmd_ends_betting_round st c =
   match c with
-  | Call -> true
-  | Check -> not st.first_action
+  | Call -> true (*bet round ends whenever someone calls*)
+  | Check -> not st.first_action(*bet round ends w/ 2nd check in betting round *)
   |_ -> false
 
 (*[do_call st p] is the state once player [p] calls in state [st]*)
@@ -456,33 +450,31 @@ let do_bet st m =
   else
     raise InvalidBet
 
-let possible_raise p x =
-  if x<0 then false
-  else if x<=(p.money) then true else false
-
-let possible_raise2 st x =
-  ((next_player st).money_in_pot-st.curr_player.money_in_pot)<=x && x<=(next_player st).money
-
-
+(*[max_bet st] returns int of the max a player can bet*)
 let max_bet st =
   st.curr_player.money
 
+(*[min_raise st] returns int of the min a player can raise*)
 let min_raise st =
   let other_player_pot_money = (next_player st).money_in_pot in
   other_player_pot_money-((st.curr_player).money_in_pot)
 
+(*[max_raise st] returns int of the max a player can raise*)
 let max_raise st =
   (next_player st).money
 
-
+(*[possible_raise p x] returns a bool to check if the amount is positive and
+  less than the player's total money.*)
   let possible_raise p x =
     if x<0 then false
     else if x<=(p.money) then true else false
 
+(*[possible_raise p x] returns a bool to check if the amount is positive and
+  less than the player's total money.*)
   let possible_raise2 st x =
     (min_raise st)<=x && x<= ((max_raise st)+(min_raise st))
 
-
+(*[do_raise st m] returns the state once the current player in [st] raises by [m] *)
 let do_raise st m =
   if (possible_raise st.curr_player m  && possible_raise2 st m) then
     let p_changed = {st.curr_player with latest_command = Some "raise";
@@ -519,7 +511,7 @@ let is_valid_command st c=
     |Quit -> true
     |_-> false
 
-(* Remove p argument from do' *)
+
 let do' st c =
   if (is_valid_command st c)
   then
@@ -543,9 +535,9 @@ let do' st c =
   else
     (raise (InvalidCommand c))
 
-(*[blinds st] returns the new state after p1 and p2 have put in their small and big blinds*)
 let blinds st =
-  if (st.play_round mod 2) = 0
+  if (st.play_round mod 2) = 0 (*alternate the big and small blinds based on
+                               the play round to be fair*)
   then
     begin
     match st.players with
