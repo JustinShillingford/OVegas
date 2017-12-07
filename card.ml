@@ -1,9 +1,7 @@
 exception InvalidCard
 
 type suit = Heart | Club | Diamond | Spade
-
 type rank = int
-
 type card = rank * suit
 
 let rep_ok c =
@@ -12,7 +10,7 @@ let rep_ok c =
     if ((r >= 2 && r <= 14)
     && (s = Heart || s = Club || s = Diamond || s = Spade)) then c else failwith "rep_ok"
   end
-  
+
 let init_card (r : rank) (s : suit) =
   match (r, s) with
   | (r, s) -> rep_ok (r, s)
