@@ -7,13 +7,13 @@ exception InvalidCommand of Command.command
  * turns and rounds of the game. *)
  type state = {players: Player.player list; play_round: int; bet_round: int; pot:int; table: Table.table; latest_bet:int;
               curr_player: Player.player; message: string;
-              first_action: bool; latest_st_command: string option}
+              first_action: bool; latest_st_command: string option; difficulty_level:string}
 
 exception GameOver of string*state
 
 (* [initial_state] is the initial value of a state in a typical game with
  * the initial value of players and the initial value of a table. *)
-val initial_state : Player.player list -> Table.deck -> state
+val initial_state : Player.player list -> Table.deck -> string -> state
 
 (* [string_of_state st] is the string representation of the state [st]. *)
 val string_of_state : state -> string
