@@ -120,8 +120,10 @@ let playgame () =
     - The dealer spreads five cards - three at once, then another, then another - which can be used by all players to make their best possible five-card hand
     - Before and after each card(s) is revealed, players take turns to bet. To stay in the hand and see the next card, all players must have put the same amount of chips in the pot as each other
     - The best poker hand wins the pot
+    The commands in this game are Call, Fold, Bet, Check, Raise, and Quit. Each round, you will see what the valid commands are in that round based on the table and your remaining money.
     If you ever get to less than $20 at the beginning of a round, you automatically lose since you won't be able to make the blind bets.
-    If you don't enter a valid difficulty, the game will default to Medium difficulty. 
+    If you don't enter a valid difficulty, the game will default to Medium difficulty.
+
     It's a seemingly simple game, but there's tons of strategies to win. Good luck!\n");
   print_endline "Please enter your name.";
   print_string "> ";
@@ -136,7 +138,7 @@ let playgame () =
   let diff = which_diff diff_input in
   let init_st = initial_state [fst player1; fst player2] (snd player2) diff in
   (* build_table init_st; *)
-  ANSITerminal.(print_string [green] "\n\t\t\t      GAME START\n");  
+  ANSITerminal.(print_string [green] ("\n\t\t\t      GAME START - " ^ diff ^ "\n"));  
   repl init_st
 
 let () = playgame ()

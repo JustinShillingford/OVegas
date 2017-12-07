@@ -21,15 +21,6 @@ let initial_state player_list deck diff =
    latest_bet=0; curr_player=(List.nth player_list 0); message= "";first_action=true;
    latest_st_command=None; difficulty_level=diff}
 
-(* let command_to_string c =
-  match c with
-  |Call -> "call"
-  |Raise(x) -> "raise"
-  |Fold -> "fold"
-  |Check ->"check"
-  |Quit -> "quit"
-  |Bet(x) -> "bet" *)
-
 (* [card_list_wo_options c_option_list] is a helper function that returns the card list
    without the options*)
 let card_list_wo_options c_option_list =
