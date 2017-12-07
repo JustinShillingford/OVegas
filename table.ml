@@ -36,6 +36,7 @@ let rep_ok d =
   let has4ofRank = has4ofRankHelper d (Array.make 13 0) in
   if (has52 && has13ofSuit && has4ofRank) then d else raise InvalidDeck
 
+(* Reference: https://github.com/jakekara/ocaml-cardstuff/blob/master/cards.ml *)
 let shuffle d =
   let rec shuffle_helper acc pull_from_d =
     if (List.length pull_from_d = 0) && (List.length acc = 52) then acc
