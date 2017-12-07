@@ -228,8 +228,8 @@ let rec all_card_combinations k c_list =
       | h :: t -> List.map (fun x -> h :: x) (all_card_combinations (k - 1) t) :: all_combs_helper t in
     List.concat (all_combs_helper c_list)
 
-(*[board_combinations_left board c_list] is the possible cards from the deck
- *that can be flipped to complete the board.*)
+(* [board_combinations_left board c_list] is the possible cards from the deck
+ * that can be flipped to complete the board. *)
 let rec board_combinations_left board c_list =
   let len = List.length board in
   if len=0 then all_card_combinations 5 c_list
@@ -237,8 +237,8 @@ let rec board_combinations_left board c_list =
   else if len=4 then all_card_combinations 1 c_list
   else []
 
-(*[hand_strength our_cards board_cards deck] is the current strength score of
- *the player by looking at the current cards in the AI's hand an the table.*)
+(* [hand_strength our_cards board_cards deck] is the current strength score of
+ * the player by looking at the current cards in the AI's hand an the table. *)
 let hand_strength our_cards board_cards deck =
   let our_rank = rank (our_cards@board_cards) in
   let opp_cardss = all_card_combinations 2 deck in
@@ -254,14 +254,14 @@ let hand_strength our_cards board_cards deck =
     in helper our_rank opp_cardss board_cards 1.0 1.0 1.0
   in (ahead+.(tied/.2.0))/.(ahead+.tied+.behind)
 
-(*These types are only helpers to compute the function hand_potential*)
+(* These types are only helpers to compute the function hand_potential *)
 type three = {ahead:float;tied:float;behind:float}
 type threes = {ahead_now:three;tied_now:three;behind_now:three}
 
-(*[hand_potential our_cards board_cards deck] returns the tuple (ppot,npot)
- *where [ppot] represents the score provided the next cards on the board are
- *favorable and [npot] represents the score provided the next ones are
- *unfavorable.*)
+(* [hand_potential our_cards board_cards deck] returns the tuple (ppot,npot)
+ * where [ppot] represents the score provided the next cards on the board are
+ * favorable and [npot] represents the score provided the next ones are
+ * unfavorable. *)
 let hand_potential our_cards board_cards deck =
   let our_rank = rank (our_cards@board_cards) in
   let opp_cardss = all_card_combinations 2 deck in
@@ -328,62 +328,62 @@ let hand_potential our_cards board_cards deck =
               (hp.ahead_now.tied)/.2.0)/.(hp_total.ahead+.hp_total.tied) in
   (ppot,npot)
 
-(*[ehs our_cards board_cards deck] implements the Poker Effective Hand Strength
-  algorithm that was developed by Darse Billings, Denis Papp,
-  Jonathan Schaeffer and Duane Szafron.
-  Reference: https://en.wikipedia.org/wiki/Poker_Effective_Hand_Strength_(EHS)_algorithm*)
+(* [ehs our_cards board_cards deck] implements the Poker Effective Hand Strength
+ * algorithm that was developed by Darse Billings, Denis Papp,
+ * Jonathan Schaeffer and Duane Szafron.
+ * Reference: https://en.wikipedia.org/wiki/Poker_Effective_Hand_Strength_(EHS)_algorithm *)
 let ehs our_cards board_cards deck =
   let hs = hand_strength our_cards board_cards deck in
   let (ppot,npot) = hand_potential our_cards board_cards deck in
   (hs*.(1.0-.npot))+.((1.0-.hs)*.ppot)
 
-(*[easy_ai st] is the command of an easy AI which folds 50% of the time.*)
+(* [easy_ai st] is the command of an easy AI which folds 50% of the time. *)
 let easy_ai st =
   let rand = Random.int 10 in
   (*Folds 50% of the time*)
   if rand < 5 then Fold
     else if (is_valid_command st Call) then Call else Check
 
-(*[medium_ai] is the command of a medium AI which does the next best
- *moderate move.*)
+(* [medium_ai] is the command of a medium AI which does the next best
+ * moderate move. *)
 let medium_ai st =
   if (is_valid_command st Call) then Call else Check
 
-(*[possible_bet p x] checks if the amount [x] is a valid bet for the
- *player [p].*)
+(* [possible_bet p x] checks if the amount [x] is a valid bet for the
+ * player [p]. *)
 let possible_bet p x =
   if x<0 then false
   else if x<=p.money then true else false
 
-(*[possible_raise p x] checks if the amount [x] is a valid raise amount for the
- *player [p].*)
+(* [possible_raise p x] checks if the amount [x] is a valid raise amount for the
+ * player [p]. *)
 let possible_raise p x =
   if x<0 then false
   else if x<=(p.money) then true else false
 
-(*[possible_raise2 st x] checks if the amount [x] is valid to raise.*)
+(* [possible_raise2 st x] checks if the amount [x] is valid to raise. *)
 let possible_raise2 st x =
   ((next_player st).money_in_pot-st.curr_player.money_in_pot)<x
 
-(*[make_conservative_move st] is a helper function to the hard AI, if the AI
- *has a weak hand, then if folds 30% of the time.*)
+(* [make_conservative_move st] is a helper function to the hard AI, if the AI
+ *has a weak hand, then if folds 30% of the time. *)
 let make_conservative_move st =
   let rand = Random.int 10 in
   (*Folds 30% of the time*)
   if rand < 3 then Fold
     else if (is_valid_command st Call) then Call else Check
 
-(*[make_aggressive_move st p] is a helper function to the hard AI, which makes
- *it raise or bet when it has a good hand.*)
+(* [make_aggressive_move st p] is a helper function to the hard AI, which makes
+ * it raise or bet when it has a good hand. *)
 let make_aggressive_move st p =
   if ((is_valid_command st (Bet 50)) && (possible_bet p 50)) then (Bet 50)
   else if ((is_valid_command st (Raise 50)) && (possible_raise p 50)
           && (possible_raise2 st 50)) then (Raise 50)
   else medium_ai st
 
-(*[sub_list l] is a partial list of the list [l].
- *Reference: Stack overflow: https://stackoverflow.com/questions/2710233/
- *how-to-get-a-sub-list-from-a-list-in-ocaml*)
+(* [sub_list l] is a partial list of the list [l].
+ * Reference: Stack overflow: https://stackoverflow.com/questions/2710233/
+ * how-to-get-a-sub-list-from-a-list-in-ocaml *)
 let sub_list l =
   let rec sublist b e l =
     match l with
@@ -393,8 +393,8 @@ let sub_list l =
        if b>0 then tail else h :: tail
   in sublist 0 ((List.length l)/10) l
 
-(*[hard_ai] is the command of a hard AI which uses the Effective Hand Strength
- *algorithm to determine the next best move.*)
+(* [hard_ai] is the command of a hard AI which uses the Effective Hand Strength
+ * algorithm to determine the next best move. *)
 let hard_ai st =
    match st.players with
   | [p1;p2] ->
