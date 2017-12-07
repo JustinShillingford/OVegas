@@ -4,18 +4,6 @@ open Command
 open Player
 open Table
 
-(*let c1=(10,Heart)
-let c2=(10,Heart)
-let c3=(10,Heart)
-let c4=(3,Heart)
-let c5=(2,Diamond)
-let c6=(2,Heart)
-let c7=(2,Heart)
-let cards2 = [c1;c2]
-let cards5 = [c1;c2;c3;c4;c5]
-let cards6 = [c1;c2;c3;c4;c5;c6]
-let cards7 = [c1;c2;c3;c4;c5;c6;c7] *)
-
 (*[card_rank_compare (r1,s1) (r2,s2)] is the comparison function between r1 and r2.*)
 let card_rank_compare (r1,s1) (r2,s2) =
   Pervasives.compare r1 r2
@@ -200,7 +188,8 @@ let ai_has_royal_flush cards =
   | [c1;c2;c3;c4;c5;c6] ->
     royal_flush [c1;c2;c3;c4;c5] || royal_flush [c2;c3;c4;c5;c6]
   | [c1;c2;c3;c4;c5;c6;c7] ->
-    royal_flush [c1;c2;c3;c4;c5] || royal_flush [c2;c3;c4;c5;c6] || royal_flush [c3;c4;c5;c6;c7]
+    royal_flush [c1;c2;c3;c4;c5] || royal_flush [c2;c3;c4;c5;c6]
+    || royal_flush [c3;c4;c5;c6;c7]
   | _ -> royal_flush cards
 
 (*[rank cards] returns the integer value of the best combination currently
@@ -225,10 +214,11 @@ let option_to_list lst =
   | None -> []
   | Some x -> x
 
-(*[all_card_combinations k c_list] returns all possible combinations of k elements from
- *list [c_list]
+(*[all_card_combinations k c_list] returns all possible combinations of
+ *k elements from list [c_list]
  *Referenced:
- *https://codereview.stackexchange.com/questions/40366/combinations-of-size-k-from-a-list-in-ocaml*)
+ *https://codereview.stackexchange.com/questions/40366/
+ *combinations-of-size-k-from-a-list-in-ocaml*)
 let rec all_card_combinations k c_list =
   if k = 0 then
     [[]]
@@ -301,22 +291,41 @@ let hand_potential our_cards board_cards deck =
               let our_best = rank (our_cards@new_board) in
               let opp_best = rank (opp_cards@new_board) in
               let new_hp =
-                if (our_best>opp_best && index=0) then {hp with ahead_now=({hp.ahead_now with ahead=(hp.ahead_now.ahead+.1.0)})}
-                else if (our_best=opp_best && index=0) then {hp with ahead_now=({hp.ahead_now with tied=(hp.ahead_now.tied+.1.0)})}
-                else if (our_best<opp_best && index=0) then {hp with ahead_now=({hp.ahead_now with behind=(hp.ahead_now.behind+.1.0)})}
-                else if (our_best>opp_best && index=1) then {hp with tied_now=({hp.tied_now with ahead=(hp.tied_now.ahead+.1.0)})}
-                else if (our_best=opp_best && index=1) then {hp with tied_now=({hp.tied_now with tied=(hp.tied_now.tied+.1.0)})}
-                else if (our_best<opp_best && index=1) then {hp with tied_now=({hp.tied_now with behind=(hp.tied_now.behind+.1.0)})}
-                else if (our_best>opp_best && index=2) then {hp with behind_now=({hp.behind_now with ahead=(hp.behind_now.ahead+.1.0)})}
-                else if (our_best=opp_best && index=2) then {hp with behind_now=({hp.behind_now with tied=(hp.behind_now.tied+.1.0)})}
-                else {hp with behind_now=({hp.behind_now with behind=(hp.behind_now.behind+.1.0)})}
+                if (our_best>opp_best && index=0)
+                  then {hp with ahead_now=({hp.ahead_now
+                  with ahead=(hp.ahead_now.ahead+.1.0)})}
+                else if (our_best=opp_best && index=0)
+                  then {hp with ahead_now=({hp.ahead_now
+                  with tied=(hp.ahead_now.tied+.1.0)})}
+                else if (our_best<opp_best && index=0)
+                  then {hp with ahead_now=({hp.ahead_now
+                  with behind=(hp.ahead_now.behind+.1.0)})}
+                else if (our_best>opp_best && index=1)
+                  then {hp with tied_now=({hp.tied_now
+                  with ahead=(hp.tied_now.ahead+.1.0)})}
+                else if (our_best=opp_best && index=1)
+                  then {hp with tied_now=({hp.tied_now
+                  with tied=(hp.tied_now.tied+.1.0)})}
+                else if (our_best<opp_best && index=1)
+                  then {hp with tied_now=({hp.tied_now
+                  with behind=(hp.tied_now.behind+.1.0)})}
+                else if (our_best>opp_best && index=2)
+                  then {hp with behind_now=({hp.behind_now
+                  with ahead=(hp.behind_now.ahead+.1.0)})}
+                else if (our_best=opp_best && index=2)
+                  then {hp with behind_now=({hp.behind_now
+                  with tied=(hp.behind_now.tied+.1.0)})}
+                else {hp with behind_now=({hp.behind_now
+                  with behind=(hp.behind_now.behind+.1.0)})}
               in helper2 our_cards opp_cards board_cards hp_total new_hp tl index
           in helper2 our_cards opp_cards board_cards hp_total hp board_combinations_left index
         in helper1 our_cards our_rank t board_cards new_hp_total new_hp deck
     in helper1 our_cards our_rank opp_cardss board_cards init_hp_total init_hp deck
   in
-  let ppot = (hp.behind_now.ahead+.(hp.behind_now.tied/.2.0)+.(hp.tied_now.ahead)/.2.0)/.(hp_total.behind+.hp_total.tied) in
-  let npot = (hp.ahead_now.behind+.(hp.tied_now.behind/.2.0)+.(hp.ahead_now.tied)/.2.0)/.(hp_total.ahead+.hp_total.tied) in
+  let ppot = (hp.behind_now.ahead+.(hp.behind_now.tied/.2.0)+.
+              (hp.tied_now.ahead)/.2.0)/.(hp_total.behind+.hp_total.tied) in
+  let npot = (hp.ahead_now.behind+.(hp.tied_now.behind/.2.0)+.
+              (hp.ahead_now.tied)/.2.0)/.(hp_total.ahead+.hp_total.tied) in
   (ppot,npot)
 
 (*[ehs our_cards board_cards deck] implements the Poker Effective Hand Strength
@@ -368,7 +377,8 @@ let make_conservative_move st =
  *it raise or bet when it has a good hand.*)
 let make_aggressive_move st p =
   if ((is_valid_command st (Bet 50)) && (possible_bet p 50)) then (Bet 50)
-  else if ((is_valid_command st (Raise 50)) && (possible_raise p 50) && (possible_raise2 st 50)) then (Raise 50)
+  else if ((is_valid_command st (Raise 50)) && (possible_raise p 50)
+          && (possible_raise2 st 50)) then (Raise 50)
   else medium_ai st
 
 (*[sub_list l] is a partial list of the list [l].
