@@ -177,7 +177,7 @@ dw     OHMy           by           EgMtMmKjp9
   let diff = which_diff diff_input in
   let init_st = initial_state [fst player1; fst player2] (snd player2) diff in
   (* build_table init_st; *)
-  ANSITerminal.(print_string [green] ("\n\t\t\t      GAME START - " ^ diff ^ "\n"));
+  ANSITerminal.(print_string [green] ("\n\t\t\t      GAME START - " ^ (String.uppercase_ascii diff) ^ "\n"));
   repl init_st
 
 let () = playgame ()

@@ -106,6 +106,7 @@ let print_pot p =
   if (p/10 = 0) then print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t\t\t│\n")
   else if (p/100 = 0) then print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t\t│\n")
   else if (p/1000 = 0) then print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t\t│\n")
+  else if (p/10000 = 0) then print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t│\n")  
   else print_string ("│\t \t\t\tPot: $" ^ (string_of_int p) ^ "\t\t\t│\n")
 
 let print_no_cards p =
@@ -137,11 +138,11 @@ let build_table s =
   if (middleSize == 0) then begin
     print_endline top_line;
     if String.length ai_pot = 1 then print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t\t│") 
-    else print_endline ("│\t \t\tAI ($" ^ ai_pot ^")\t\t\t\t\t│");
+    else print_endline ("│\t \t\tAI ^ ($" ^ ai_pot ^")\t\t\t\t\t│");
     print_facedown ();
     print_no_cards pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t\t│") 
+    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│") 
     else print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
     print_endline bot_line
   end
@@ -153,7 +154,7 @@ let build_table s =
     print_three_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2);
     print_pot pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t\t│") 
+    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│") 
     else print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
     print_endline bot_line
   end
@@ -165,7 +166,7 @@ let build_table s =
     print_four_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3);
     print_pot pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t\t│") 
+    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│") 
     else print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
     print_endline bot_line
   end
@@ -177,7 +178,7 @@ let build_table s =
     print_five_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3) (List.nth middleCards 4);
     print_pot pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t\t│") 
+    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│") 
     else print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
     print_endline bot_line
   end
@@ -189,7 +190,7 @@ let build_table s =
     print_five_cards (List.hd middleCards) (List.nth middleCards 1) (List.nth middleCards 2) (List.nth middleCards 3) (List.nth middleCards 4);
     print_pot pot;
     print_two_cards (List.hd humanCards) (List.nth humanCards 1);
-    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t\t│") 
+    if String.length phuman_pot = 1 then print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│") 
     else print_string ("│\t \t\t" ^ phuman_str ^ " ($" ^ phuman_pot ^ ")\t\t\t\t\t│");
     print_endline bot_line
   end
