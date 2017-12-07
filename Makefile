@@ -13,9 +13,3 @@ play:
 
 test:
 	ocamlbuild -use-ocamlfind test.byte && ./test.byte
-
-zip:
-	zip ovegassrc.zip *.ml*
-	
-zipcheck:
-	bash checkzip.sh
