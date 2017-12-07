@@ -1,4 +1,5 @@
 # OVegas
+![](https://i.imgur.com/kDWBsfF.jpg)
 *A project brought to you courtesy of **Mishcat**, **Johanna**, **Ghassane**, and **Justin***
 
 
@@ -35,4 +36,10 @@ So to set it all up, follow [this link right here](https://www.cs.cornell.edu/co
 > - OCaml (You shouldn't need this one because Reason should do everything this one does and more but if you run into any problems consider installing this one as well)
 
 ### Playing The Game
+
+Once OCaml has been installed and the Repo files downloaded (or in the case of the graders for the project, unzipping ovegassrc.zip):
+
+ 1. Navigate to the folder that contains the project files by using `cd` in your Terminal/Command Prompt
+ 2. Type `make play` and hit enter
+ 3. After it loads you are now in the game!
 
