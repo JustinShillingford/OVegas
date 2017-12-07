@@ -24,7 +24,7 @@ let initial_state player_list deck difficulty_level=
 
 
 (* [card_list_wo_options c_option_list] is a helper function that returns the
-   card list without the options*)
+   card list without the options. *)
 let card_list_wo_options c_option_list =
   match c_option_list with
   |None -> []
@@ -45,20 +45,20 @@ let string_of_state st =
     |_-> raise Illegal in
   state_string ^ state_string2
 
-(*[compare_cards c1 c2] compares the ranks of 2 cards and returns 1 if c1's rank
-  is greater than c2's, -1 if its less, or 0 if they are equivalent*)
+(* [compare_cards c1 c2] compares the ranks of 2 cards and returns 1 if c1's rank
+  is greater than c2's, -1 if its less, or 0 if they are equivalent. *)
 let compare_cards c1 c2 =
   if (fst c1) > (fst c2) then 1
   else if (fst c2) > (fst c1) then -1
   else 0
 
-(*[sorted_ranks_list card_list] returns a list of cards sorted by their ranks*)
+(* [sorted_ranks_list card_list] returns a list of cards sorted by their ranks. *)
 let sorted_ranks_list card_list =
   let sorted_cards = List.sort compare_cards card_list in
   let ranks_of_sorted = List.map (fun x -> fst x) sorted_cards in
   ranks_of_sorted
 
-(*[suits_list card_list] returns a list of the suits of cards in [card_list]*)
+(* [suits_list card_list] returns a list of the suits of cards in [card_list]. *)
 let suits_list card_list =
   let list_of_suits = List.map (fun x -> snd x) card_list in
   list_of_suits
