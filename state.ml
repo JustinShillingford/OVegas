@@ -33,13 +33,12 @@ let card_list_wo_options c_option_list =
 let string_of_state st =
   let state_string = "You are currently on round: " ^(string_of_int st.play_round) ^
                      " and bet round " ^ (string_of_int st.bet_round) ^ ". The pot is " ^
-                     (string_of_int st.pot) ^ ". The current shared cards in
-                     the middle of the table are" in
+                     (string_of_int st.pot) ^ ". The current shared cards in the middle of the table are " in
   let shared_cards = card_list_wo_options (snd st.table) in
-  let st_shared_cards= List.map string_of_card shared_cards in
+  let st_shared_cards = List.map string_of_card shared_cards in
   let state_string2=
     match st_shared_cards with
-    |[] ->"Flop has not occured yet" ;
+    |[] ->"none since the flop has not yet occured." ;
     |c1::c2::c3::c4::c5::[] -> c1 ^ ", " ^ c2 ^ ", " ^ c3 ^ ", " ^ c4 ^ ", " ^ c5
     |c1::c2::c3::c4::[] ->c1 ^ ", " ^ c2 ^ ", " ^ c3 ^ ", " ^ c4
     |c1::c2::c3::[] -> c1 ^ ", " ^ c2 ^ ", " ^ c3
