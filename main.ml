@@ -162,9 +162,9 @@ dw     OHMy           by           EgMtMmKjp9
   let player2 = init_player "AI" (snd player1) in
   print_endline "Choose a difficulty: Easy, Medium, or Hard";
   print_string "> ";
-  (* let diff_input = read_line () in
-  let diff = which_diff diff_input in *)
-  let init_st = initial_state [fst player1; fst player2] (snd player2) (*diff*) in
+  let diff_input = read_line () in
+  let diff = which_diff diff_input in
+  let init_st = initial_state [fst player1; fst player2] (snd player2) diff in
   (* build_table init_st; *)
   ANSITerminal.(print_string [green] "\n\t\t\t      GAME START\n");
   repl init_st
