@@ -54,9 +54,9 @@ let p2 = init_player "AI" (snd p1)
 let st = initial_state [fst p1;fst p2] (snd p2) "medium"
 let new_st = 
   {players = [{id = "TestPlayer1"; two_cards = [(14, Heart); (2, Heart)]; 
-              money = 90; latest_command = None; remaining_in_round = true; 
+              money = 490; latest_command = None; remaining_in_round = true; 
               money_in_pot = 10; is_human = true}; 
-              {id = "AI"; two_cards = [(3, Heart); (4, Heart)]; money = 80; 
+              {id = "AI"; two_cards = [(3, Heart); (4, Heart)]; money = 480; 
               latest_command = None; remaining_in_round = true; 
               money_in_pot = 20; is_human = false}];
    play_round = 0; 
@@ -75,7 +75,7 @@ let new_st =
      None);
    latest_bet = 20;
    curr_player =
-    {id = "TestPlayer1"; two_cards = [(14, Heart); (2, Heart)]; money = 90;
+    {id = "TestPlayer1"; two_cards = [(14, Heart); (2, Heart)]; money = 490;
      latest_command = None; remaining_in_round = true; money_in_pot = 10;
      is_human = true};
    message = ""; first_action = true; latest_st_command = None;
