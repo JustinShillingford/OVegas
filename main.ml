@@ -17,9 +17,14 @@ let rec repl st =
   if (st.message)="quit" then () else
   if (st.bet_round=5)
 
-  then ((build_table st); (print_endline st.message); let reset_st = if ((List.length (fst st.table)) >=9)
-                                                        then new_play_round {st with bet_round=0; play_round=st.play_round+1;pot=0; latest_bet=0; message=""}
-                                                        else new_play_round_new_deck ({st with bet_round=0;play_round=st.play_round+1;pot=0; latest_bet=0; message=""})
+  then ((build_table st); (print_endline st.message);
+        let reset_st =
+          if ((List.length (fst st.table)) >=9)then
+            new_play_round {st with bet_round=0; play_round=st.play_round+1;
+                                    pot=0; latest_bet=0; message=""}
+          else (new_play_round_new_deck
+              ({st with bet_round=0;play_round=st.play_round+1;pot=0;
+                        latest_bet=0; message=""}))
         in (repl reset_st)) else
     let st = if (st.bet_round=0) then (blinds st) else st in
     build_table st;
@@ -35,8 +40,10 @@ let rec repl st =
       | InvalidCommand (c) -> ANSITerminal.(print_string [red] "That's an invalid command.\n\n"); st
       | InvalidRaise -> ANSITerminal.(print_string [red] "That's an invalid amount."); st
       | GameOver (win_id,s) -> begin
-          if (win_id = "AI") then (build_table {s with bet_round=5}; lose_message (); {st with message="quit"})
-          else (build_table {s with bet_round=5}; win_message (); {st with message="quit"})
+          if (win_id = "AI") then (build_table {s with bet_round=5};
+                                   lose_message (); {st with message="quit"})
+          else (build_table {s with bet_round=5};
+                win_message (); {st with message="quit"})
         end
       | _ -> (st)
       in
@@ -72,8 +79,12 @@ let rec repl st =
       match e with
       | GameOver (win_id,s) ->
         begin
-          if (win_id = "AI") then (build_table {s with bet_round=5}; lose_message (); {st with bet_round=5; message="quit"})
-          else (build_table {s with bet_round=5}; win_message (); {st with bet_round=5; message="quit"})
+          if (win_id = "AI") then
+            (build_table {s with bet_round=5};
+             lose_message (); {st with bet_round=5; message="quit"})
+          else
+            (build_table {s with bet_round=5};
+             win_message (); {st with bet_round=5; message="quit"})
         end
       | _ -> st in
       if next_state.message="quit" then ()
