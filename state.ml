@@ -432,16 +432,11 @@ let cmd_ends_betting_round st c =
 (*[do_call st p] is the state once player [p] calls in state [st]*)
 let do_call st  =
 
-print_endline(string_of_int st.curr_player.money);
-print_endline(string_of_int (next_player st).money_in_pot);
-print_endline(string_of_int (st.curr_player).money_in_pot);
-print_endline(string_of_int (next_player st).money_in_pot);
   let p_changed = {st.curr_player with latest_command = Some "call";
 
                   money=(st.curr_player).money-((next_player st).money_in_pot
                                                 -(st.curr_player).money_in_pot);
                                        money_in_pot=(next_player st).money_in_pot;} in
-  print_endline(string_of_int st.curr_player.money);
   let new_players = (List.map
                        (fun x -> if x=st.curr_player then p_changed else x)
                        st.players) in
@@ -460,7 +455,7 @@ let do_check st =
 
 (*[do_fold st p] is the state once player [p] folds in state [st]*)
 let do_fold st =
-  print_endline(string_of_int st.pot);
+
   let otherp = next_player st in
   let other_pl = {otherp with money=otherp.money+st.pot; money_in_pot=0} in
   let changed_curr = {st.curr_player with money_in_pot=0} in
