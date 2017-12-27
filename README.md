@@ -5,7 +5,7 @@
 
 ## TL;DR (assuming you have OCaml previously installed)
 
- 1. [Download] (https://github.com/JustinShillingford/OVegas/archive/master.zip) the project files
+ 1. [Download](https://github.com/JustinShillingford/OVegas/archive/master.zip) the project files
  2. Navigate, using the `cd` command in your Command Line Interface (CLI), to the location of the project folder
  3. Type `make play` and hit enter
  4. Have fun!
